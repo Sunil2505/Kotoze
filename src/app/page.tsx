@@ -6,7 +6,7 @@ export default function Home() {
       <Navbar />
 
       <section className="flex h-[80vh] items-center justify-center">
-   npm run dev     <h1 className="text-5xl font-bold text-gray-800">
+            <h1 className="text-5xl font-bold text-gray-800">
           Hero Section Coming Next...
         </h1>
       </section>
