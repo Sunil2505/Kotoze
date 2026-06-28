@@ -4,7 +4,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <h1 className="text-3xl font-bold text-orange-500">
-          Kartly
+          Kotoze
         </h1>
 
         {/* Search */}
