@@ -1,3 +1,4 @@
+import Image from "next/image";
 type Product = {
   name: string;
   price: string;
@@ -24,10 +25,15 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button className="text-xl">🤍</button>
       </div>
 
-      <div className="flex h-52 items-center justify-center bg-gray-100 text-9xl">
-        {product.image}
-      </div>
-
+<div className="flex h-56 items-center justify-center bg-gray-100 p-4">
+  <Image
+    src={product.image}
+    alt={product.name}
+    width={220}
+    height={220}
+    className="h-44 w-auto object-contain transition-transform duration-300 hover:scale-105"
+  />
+</div>
       <div className="p-4">
         <h3 className="text-lg font-bold text-gray-900">
           {product.name}
