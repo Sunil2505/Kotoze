@@ -1,11 +1,13 @@
 export default function Hero() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-20 text-center">
-      <h1 className="text-6xl font-extrabold text-gray-900">
-        Everything You Need{" "}
-        <span className="text-orange-500">All in One Place</span>
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900">
+        Everything You Need,
+       <br />
+         <span className="text-orange-500">
+          All in One Place.
+        </span>
       </h1>
-
       <p className="mx-auto mt-8 max-w-3xl text-2xl text-gray-600">
         Buy products from trusted sellers across India.
       </p>
