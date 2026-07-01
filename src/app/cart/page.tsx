@@ -12,18 +12,18 @@ export default function CartPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12">
       <div className="mx-auto max-w-7xl px-6">
-        <h1 className="mb-2 text-4xl font-bold text-gray-900">
+        <h1 className="mb-2 text-5xl font-extrabold text-gray-900">
           Shopping Cart
         </h1>
 
-        <p className="mb-8 text-gray-500">
+        <p className="mb-8 text-gray-700">
           You have <span className="font-semibold">1 item</span> in your cart
         </p>
 
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Cart Item */}
           <div className="lg:col-span-2">
-            <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
 
               <div className="flex flex-col gap-6 md:flex-row">
 
@@ -39,17 +39,16 @@ export default function CartPage() {
 
                 <div className="flex-1">
 
-                  <h2 className="text-2xl font-bold">
+                <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
                     Wireless Headphones
-                  </h2>
-
-                  <p className="mt-1 text-gray-500">
+                </h2>
+                  <p className="mt-1 text-gray-700 font-medium">
                     Sony Premium Series
                   </p>
 
                   <div className="mt-3 flex items-center gap-2">
                     ⭐⭐⭐⭐⭐
-                    <span className="text-gray-500">(124 Reviews)</span>
+                    <span className="text-gray-700 font-medium">(124 Reviews)</span>
                   </div>
 
                   <p className="mt-3 inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
@@ -61,7 +60,7 @@ export default function CartPage() {
                       ₹2,499
                     </span>
 
-                    <span className="text-lg text-gray-400 line-through">
+                    <span className="text-lg text-gray-500 line-through">
                       ₹3,199
                     </span>
                   </div>
@@ -115,25 +114,25 @@ export default function CartPage() {
 
           <div>
 
-            <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
 
-              <h2 className="mb-6 text-2xl font-bold">
+              <h2 className="mb-6 text-3xl font-extrabold text-gray-900">
                 Order Summary
               </h2>
 
-              <div className="mb-3 flex justify-between">
+              <div className="mb-4 flex justify-between text-lg font-medium text-gray-800">
                 <span>Subtotal</span>
                 <span>₹2,499</span>
               </div>
 
-              <div className="mb-3 flex justify-between">
+              <div className="mb-4 flex justify-between text-lg font-medium text-gray-800">
                 <span>Shipping</span>
                 <span className="text-green-600 font-semibold">
                   FREE
                 </span>
               </div>
 
-              <div className="mb-3 flex justify-between">
+              <div className="mb-4 flex justify-between text-lg font-medium text-gray-800">
                 <span>Discount</span>
                 <span className="text-orange-500">
                   - ₹700
@@ -142,22 +141,22 @@ export default function CartPage() {
 
               <hr className="my-5" />
 
-              <div className="flex justify-between text-2xl font-bold">
+              <div className="flex justify-between text-3xl font-extrabold text-gray-900">
                 <span>Total</span>
                 <span>₹2,499</span>
               </div>
 
-              <button className="mt-6 w-full rounded-xl bg-orange-500 py-4 font-bold text-white transition hover:bg-orange-600">
+              <button className="mt-6 w-full rounded-xl bg-orange-500 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:bg-orange-600 hover:shadow-2xl">
                 Proceed to Checkout
               </button>
 
-              <div className="mt-6 rounded-xl bg-green-50 p-4">
-                <div className="flex items-center gap-2 font-semibold text-green-700">
+              <div className="mt-6 rounded-xl bg-green-100 border border-green-300 p-4">
+                <div className="flex items-center gap-2 text-lg font-bold text-green-800">
                   <ShieldCheck size={20} />
                   Secure Checkout
                 </div>
 
-                <p className="mt-2 text-sm text-gray-600">
+                <p className="mt-2 text-base text-gray-700">
                   Your payment information is protected with SSL encryption.
                 </p>
               </div>
