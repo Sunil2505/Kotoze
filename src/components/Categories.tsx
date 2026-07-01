@@ -2,9 +2,9 @@ import categories from "@/data/categories";
 
 export default function Categories() {
   return (
-    <section className="bg-gray-100 py-16">
+    <section className="bg-gray-100 py-10">
       <div className="mx-auto max-w-7xl px-6">
-        <h2 className="mb-12 text-center text-4xl font-extrabold text-gray-900">
+        <h2 className="mb-10 text-center text-4xl font-bold text-gray-900">
           Shop by Category
         </h2>
 
@@ -12,10 +12,14 @@ export default function Categories() {
           {categories.map((category) => (
             <div
               key={category.id}
-              className="rounded-2xl bg-white p-6 text-center shadow transition hover:-translate-y-2 hover:shadow-lg"
+              className="rounded-2xl bg-white p-6 text-center border border-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
-              <div className="mb-3 text-5xl">{category.icon}</div>
-
+            <div className="mb-4 flex justify-center">
+              <category.icon
+                size={48}
+                className="text-orange-500 transition-transform duration-300 group-hover:scale-110"
+              />
+            </div>
               <h3 className="font-semibold text-gray-700">
                 {category.name}
               </h3>

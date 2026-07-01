@@ -19,16 +19,16 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
 
       <div className="flex items-center justify-between bg-orange-500 px-4 py-2 text-white">
-        <span className="rounded bg-orange-500 px-2 py-1 text-xs font-bold">
+        <span className="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white">
           {product.discount}
         </span>
 
-       <button className="transition hover:text-red-500">
+       <button className="rounded-full p-2 transition-all duration-200 hover:bg-red-50 hover:text-red-500">
          <Heart size={20} />
       </button>
       </div>
 
-<div className="flex h-56 items-center justify-center bg-gray-100 p-4">
+<div className="flex h-56 items-center justify-center bg-white p-4">
   <Image
   src={product.image}
   alt={product.name}
@@ -38,7 +38,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 />
 </div>
       <div className="p-4">
-        <h3 className="text-lg font-bold text-gray-900">
+        <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">
           {product.name}
         </h3>
 
