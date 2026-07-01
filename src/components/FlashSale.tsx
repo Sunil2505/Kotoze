@@ -1,4 +1,5 @@
 import ProductCard from "./ProductCard";
+import Countdown from "./Countdown";
 
 const flashSaleProducts = [
   {
@@ -43,9 +44,10 @@ export default function FlashSale() {
   return (
     <section className="bg-orange-50 py-14">
       <div className="mx-auto max-w-7xl px-6">
+        {/* Header */}
         <div className="mb-10 flex items-center justify-between">
           <div>
-            <h2 className="text-4xl font-bold text-gray-900">
+            <h2 className="text-4xl font-extrabold text-orange-500">
               🔥 Flash Sale
             </h2>
 
@@ -54,11 +56,10 @@ export default function FlashSale() {
             </p>
           </div>
 
-          <div className="rounded-xl bg-red-500 px-5 py-3 font-bold text-white">
-            Ends in: 03:12:45
-          </div>
+          <Countdown />
         </div>
 
+        {/* Products */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {flashSaleProducts.map((product) => (
             <ProductCard
@@ -66,6 +67,13 @@ export default function FlashSale() {
               product={product}
             />
           ))}
+        </div>
+
+        {/* View All */}
+        <div className="mt-10 text-center">
+          <button className="rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-all duration-300 hover:bg-orange-600 hover:shadow-lg">
+            View All Deals
+          </button>
         </div>
       </div>
     </section>
