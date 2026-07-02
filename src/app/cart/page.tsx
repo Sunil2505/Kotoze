@@ -1,3 +1,7 @@
+"use client";
+
+import { useCart } from "@/context/CartContext";
+import Link from "next/link";
 import Image from "next/image";
 import {
   Minus,
@@ -9,6 +13,14 @@ import {
 } from "lucide-react";
 
 export default function CartPage() {
+  const {
+    cart,
+    cartCount,
+    cartTotal,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+  } = useCart();
   return (
     <main className="min-h-screen bg-gray-50 py-12">
       <div className="mx-auto max-w-7xl px-6">
@@ -103,9 +115,9 @@ export default function CartPage() {
 
             {/* Continue Shopping */}
 
-            <button className="mt-6 flex items-center gap-2 rounded-xl border bg-white px-6 py-3 font-semibold hover:border-orange-500 hover:text-orange-500">
+            <button className="mt-6 flex items-center gap-2 rounded-xl border-2 border-orange-500 bg-orange-50 px-6 py-3 font-semibold text-orange-600 transition-all duration-300 hover:bg-orange-500 hover:text-white hover:shadow-lg">
               <ShoppingBag size={20} />
-              Continue Shopping
+               Continue Shopping
             </button>
 
           </div>

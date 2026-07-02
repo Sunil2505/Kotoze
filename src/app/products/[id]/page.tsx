@@ -92,16 +92,20 @@ export default function ProductDetails() {
 
 
 <button
-  onClick={() =>
+  onClick={() => {
+    console.log("Button Clicked");
+
     addToCart({
       id: 1,
       name: "Wireless Headphones",
       price: 2499,
       image: "/images/products/headphones.jpg",
       quantity: 1,
-    })
-  }
-  className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:bg-orange-600"
+    });
+
+    console.log("Added to Cart");
+  }}
+className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-orange-600"
 >
   <ShoppingCart size={20} />
   Add to Cart

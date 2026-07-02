@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
@@ -41,15 +41,18 @@ export default function Header() {
             <Heart size={24} strokeWidth={2} />
           </button>
 
-          <button className="relative transition hover:text-orange-500">
-            <ShoppingCart size={24} strokeWidth={2} />
+          <Link
+  href="/cart"
+  className="relative transition hover:text-orange-500"
+>
+  <ShoppingCart size={24} strokeWidth={2} />
 
-        {cartCount > 0 && (
-            <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
-              {cartCount}
-            </span>
-          )}
-          </button>
+  {cartCount > 0 && (
+    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
+      {cartCount}
+    </span>
+  )}
+</Link>
 
           <button className="transition hover:text-orange-500">
             <User size={24} strokeWidth={2} />
