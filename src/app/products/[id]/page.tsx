@@ -1,6 +1,7 @@
 
 import { Star, Heart, ShoppingCart } from "lucide-react";
 import ProductGallery from "../../../components/product/ProductGallery";
+import ProductTabs from "../../../components/product/ProductTabs";
 export default function ProductDetails() {
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
@@ -101,6 +102,7 @@ export default function ProductDetails() {
         </div>
 
       </div>
+      <ProductTabs />
     </main>
   );
 }
