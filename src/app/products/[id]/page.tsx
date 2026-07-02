@@ -1,9 +1,12 @@
-
+"use client";
+import { useCart } from "@/context/CartContext";
 import { Star, Heart, ShoppingCart } from "lucide-react";
 import ProductGallery from "../../../components/product/ProductGallery";
 import ProductTabs from "../../../components/product/ProductTabs";
 import RelatedProducts from "../../../components/product/RelatedProducts";
 export default function ProductDetails() {
+  const { addToCart } = useCart();
+
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
       <div className="grid gap-12 lg:grid-cols-2">
@@ -86,10 +89,27 @@ export default function ProductDetails() {
 
   {/* Buttons */}
   <div className="flex flex-wrap gap-4">
-    <button className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-orange-600">
-      <ShoppingCart size={20} />
-      Add to Cart
-    </button>
+
+
+<button
+  onClick={() =>
+    addToCart({
+      id: 1,
+      name: "Wireless Headphones",
+      price: 2499,
+      image: "/images/products/headphones.jpg",
+      quantity: 1,
+    })
+  }
+  className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:bg-orange-600"
+>
+  <ShoppingCart size={20} />
+  Add to Cart
+</button>
+
+
+
+
 
     <button className="rounded-xl bg-green-600 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-green-700">
       Buy Now

@@ -1,6 +1,11 @@
+"use client";
+
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
+  const { cartCount } = useCart();
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
 
@@ -39,9 +44,11 @@ export default function Header() {
           <button className="relative transition hover:text-orange-500">
             <ShoppingCart size={24} strokeWidth={2} />
 
+        {cartCount > 0 && (
             <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
-              2
+              {cartCount}
             </span>
+          )}
           </button>
 
           <button className="transition hover:text-orange-500">
