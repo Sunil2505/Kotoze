@@ -82,10 +82,11 @@ useEffect(() => {
 
 
 return (
-  <section
-    ref={sectionRef}
-    className="pt-32 pb-16"
-  >
+<section
+  id="products"
+  ref={sectionRef}
+  className="pt-32 pb-16"
+>
 
       <div className="mx-auto max-w-7xl px-6">
 
