@@ -44,15 +44,20 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2">
 
-              {cart.map((item) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  increaseQuantity={increaseQuantity}
-                  decreaseQuantity={decreaseQuantity}
-                  removeFromCart={removeFromCart}
-                />
-              ))}
+              {cart.map((item, index) => (
+
+                  <CartItem
+
+                    key={`${item.id}-${index}`}
+
+                    item={item}
+                    increaseQuantity={increaseQuantity}
+                    decreaseQuantity={decreaseQuantity}
+                    removeFromCart={removeFromCart}
+
+                  />
+
+                ))}
 
 
               <Link

@@ -1,7 +1,7 @@
 const trendingProducts = [
   {
     name: "Apple iPhone 16",
-    price: "₹79,999",
+    price: "79999",
     oldPrice: "₹84,999",
     image: "/images/products/iphone.jpg",
     rating: "★★★★★",
@@ -10,7 +10,7 @@ const trendingProducts = [
   },
   {
     name: "Samsung Galaxy S25",
-    price: "₹74,999",
+    price: "74999",
     oldPrice: "₹79,999",
     image: "/images/products/s25.jpg",
     rating: "★★★★★",
@@ -19,7 +19,7 @@ const trendingProducts = [
   },
   {
     name: "Sony WH-1000XM5",
-    price: "₹24,999",
+    price: "24999",
     oldPrice: "₹29,999",
     image: "/images/products/sony.jpg",
     rating: "★★★★★",
@@ -28,7 +28,7 @@ const trendingProducts = [
   },
   {
     name: "Apple Watch",
-    price: "₹39,999",
+     price: 39999,
     oldPrice: "₹44,999",
     image: "/images/products/applewatch.jpg",
     rating: "★★★★★",

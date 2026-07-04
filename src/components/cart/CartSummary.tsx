@@ -1,5 +1,5 @@
 import { ShieldCheck } from "lucide-react";
-
+import Link from "next/link";
 type Props = {
   cartTotal: number;
 };
@@ -45,10 +45,12 @@ export default function CartSummary({ cartTotal }: Props) {
         </div>
 
 
-        <button className="mt-6 w-full rounded-xl bg-orange-500 py-4 text-lg font-bold text-white hover:bg-orange-600">
-          Proceed to Checkout
-        </button>
-
+<Link
+  href="/checkout"
+  className="mt-6 block w-full rounded-xl bg-orange-500 py-4 text-center text-lg font-bold text-white hover:bg-orange-600"
+>
+  Proceed to Checkout
+</Link>
 
         <div className="mt-6 rounded-xl border border-green-300 bg-green-100 p-4">
 

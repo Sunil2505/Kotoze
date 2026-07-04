@@ -4,44 +4,66 @@ import "./globals.css";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import { OrderProvider } from "@/context/OrderContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { ReviewProvider } from "@/context/ReviewContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 
 export const metadata: Metadata = {
   title: "Kotoze",
   description: "India's Next Generation Marketplace",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
+
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <CartProvider>
-          <Header />
 
-          <main className="flex-1">
+ <body className="min-h-full flex flex-col">
+
+  <AuthProvider>
+    <CartProvider>
+      <WishlistProvider>
+        <OrderProvider>
+          <ReviewProvider>
+
+            <Header />
+
             {children}
-          </main>
 
-          <Footer />
-        </CartProvider>
-      </body>
+          </ReviewProvider>
+        </OrderProvider>
+      </WishlistProvider>
+    </CartProvider>
+  </AuthProvider>
+
+</body>
+
     </html>
+
   );
+
 }

@@ -4,8 +4,11 @@ import { Star, Heart, ShoppingCart } from "lucide-react";
 import ProductGallery from "../../../components/product/ProductGallery";
 import ProductTabs from "../../../components/product/ProductTabs";
 import RelatedProducts from "../../../components/product/RelatedProducts";
+import { useWishlist } from "@/context/WishlistContext";
+import ReviewSection from "@/components/ReviewSection";
 export default function ProductDetails() {
   const { addToCart } = useCart();
+  const { toggleWishlist } = useWishlist();
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
@@ -92,42 +95,47 @@ export default function ProductDetails() {
 
 
 <button
-  onClick={() => {
-    console.log("Button Clicked");
-
+  onClick={() =>
     addToCart({
       id: 1,
       name: "Wireless Headphones",
       price: 2499,
       image: "/images/products/headphones.jpg",
       quantity: 1,
-    });
-
-    console.log("Added to Cart");
-  }}
-className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-orange-600"
+    })
+  }
+  className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-orange-600"
 >
   <ShoppingCart size={20} />
   Add to Cart
 </button>
 
 
+<button className="rounded-xl bg-green-600 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-green-700">
+  Buy Now
+</button>
 
 
-
-    <button className="rounded-xl bg-green-600 px-8 py-4 font-semibold text-white transition hover:scale-105 hover:bg-green-700">
-      Buy Now
-    </button>
-
-    <button className="rounded-xl border border-gray-600 p-4 transition hover:border-orange-500">
-      <Heart />
-    </button>
+<button
+  onClick={() =>
+    toggleWishlist({
+      id: 1,
+      name: "Wireless Headphones",
+      price: 2499,
+      image: "/images/products/headphones.jpg",
+    })
+  }
+  className="rounded-xl border border-gray-600 p-4 transition hover:border-orange-500"
+>
+  <Heart />
+</button>
   </div>
 </div>
         </div>
 
       </div>
       <ProductTabs />
+      <ReviewSection productId={1} />
       <RelatedProducts />
     </main>
   );
