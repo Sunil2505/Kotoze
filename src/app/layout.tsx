@@ -10,6 +10,7 @@ import { WishlistProvider } from "@/context/WishlistContext";
 import { OrderProvider } from "@/context/OrderContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ReviewProvider } from "@/context/ReviewContext";
+import { SearchProvider } from "@/context/SearchContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,11 +50,15 @@ export default function RootLayout({
       <WishlistProvider>
         <OrderProvider>
           <ReviewProvider>
+            <SearchProvider>
 
-            <Header />
+              <Header />
 
-            {children}
+              {children}
 
+              <Footer />
+
+            </SearchProvider>
           </ReviewProvider>
         </OrderProvider>
       </WishlistProvider>

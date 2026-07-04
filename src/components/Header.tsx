@@ -12,12 +12,14 @@ import {
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
+import { useSearch } from "@/context/SearchContext";
 
 export default function Header() {
 
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { isLoggedIn } = useAuth();
+  const { search, setSearch } = useSearch();
 
   return (
 
@@ -62,16 +64,21 @@ export default function Header() {
 
 
 
-            <input
+          <input
 
-              type="text"
+            type="text"
 
-              placeholder="Search products..."
+            value={search}
 
-             className="w-full rounded-full bg-transparent py-2 pl-12 pr-4 text-gray-900 placeholder:text-gray-500 focus:outline-none"
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
 
-            />
+            placeholder="Search products..."
 
+            className="w-full rounded-full bg-transparent py-2 pl-12 pr-4 text-gray-900 placeholder:text-gray-500 focus:outline-none"
+
+          />
 
           </div>
 

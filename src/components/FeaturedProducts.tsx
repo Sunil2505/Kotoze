@@ -1,6 +1,11 @@
+"use client";
+
 import ProductCard from "./ProductCard";
+import { useEffect, useRef } from "react";
+import { useSearch } from "@/context/SearchContext";
 
 const products = [
+  
   {
     id: 1,
     name: "Wireless Headphones",
@@ -49,9 +54,38 @@ const products = [
 
 export default function FeaturedProducts() {
 
-  return (
+  const { search } = useSearch();
 
-    <section className="pt-32 pb-16">
+const sectionRef = useRef<HTMLDivElement>(null);
+
+
+useEffect(() => {
+
+  if (search.trim() !== "") {
+
+    sectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+  }
+
+}, [search]);
+  const filteredProducts =
+    products.filter((product) =>
+      product.name
+        .toLowerCase()
+        .includes(
+          search.toLowerCase()
+        )
+    );
+
+
+return (
+  <section
+    ref={sectionRef}
+    className="pt-32 pb-16"
+  >
 
       <div className="mx-auto max-w-7xl px-6">
 
@@ -63,18 +97,52 @@ export default function FeaturedProducts() {
         </h2>
 
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+{filteredProducts.length === 0 ? (
 
-          {products.map((product) => (
+  <div className="py-20 text-center">
 
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
+    <h3 className="text-3xl font-bold text-gray-900">
 
-          ))}
+      🔍 No products found
 
-        </div>
+    </h3>
+
+
+    <p className="mt-3 text-gray-500">
+
+      Try searching something else
+
+    </p>
+
+
+  </div>
+
+
+) : (
+
+
+  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+
+    {filteredProducts.map((product) => (
+
+
+      <ProductCard
+
+        key={product.id}
+
+        product={product}
+
+      />
+
+
+    ))}
+
+
+  </div>
+
+
+)}
 
 
       </div>
