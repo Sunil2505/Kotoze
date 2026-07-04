@@ -28,49 +28,120 @@ const products = [
   },
 ];
 
+
 export default function RelatedProducts() {
+
   return (
+
     <section className="mt-20">
-      <h2 className="mb-8 text-3xl font-bold text-white">
+
+
+      <h2 className="mb-8 text-3xl font-extrabold text-gray-900">
+
         You May Also Like
+
       </h2>
 
+
+
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+
         {products.map((product) => (
+
+
           <div
+
             key={product.id}
-            className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition duration-300 hover:-translate-y-2 hover:border-orange-500"
+
+            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+
           >
+
+
+
             <Image
+
               src={product.image}
+
               alt={product.name}
+
               width={250}
+
               height={250}
+
               className="mx-auto h-48 w-full object-contain"
+
             />
 
-            <h3 className="mt-5 text-lg font-semibold text-white">
+
+
+
+            <h3 className="mt-5 text-lg font-bold text-gray-900">
+
               {product.name}
+
             </h3>
 
+
+
+
             <div className="mt-2 flex items-center gap-1 text-yellow-400">
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
+
+
+              {[...Array(5)].map((_, index) => (
+
+                <Star
+
+                  key={index}
+
+                  size={16}
+
+                  fill="currentColor"
+
+                />
+
+              ))}
+
+
             </div>
 
-            <p className="mt-3 text-2xl font-bold text-orange-500">
+
+
+
+
+            <p className="mt-3 text-2xl font-extrabold text-orange-600">
+
               {product.price}
+
             </p>
 
-            <button className="mt-5 w-full rounded-xl bg-orange-500 py-3 font-semibold text-white transition hover:bg-orange-600">
+
+
+
+
+            <button className="mt-5 w-full rounded-xl bg-orange-500 py-3 font-bold text-white transition hover:bg-orange-600">
+
+
               View Product
+
+
             </button>
+
+
+
           </div>
+
+
         ))}
+
+
       </div>
+
+
     </section>
+
   );
+
 }
