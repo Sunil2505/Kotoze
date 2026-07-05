@@ -1,6 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import ProductCard from "./ProductCard";
 
@@ -20,24 +24,95 @@ export default function TrendingProducts() {
 
 
 
+  const [canLeft, setCanLeft] =
+    useState(false);
+
+
+  const [canRight, setCanRight] =
+    useState(false);
+
+
+
+
+  const checkScroll = () => {
+
+
+    const el =
+      scrollRef.current;
+
+
+    if (!el) return;
+
+
+    setCanLeft(
+      el.scrollLeft > 0
+    );
+
+
+    setCanRight(
+
+      el.scrollLeft + el.clientWidth <
+        el.scrollWidth - 5
+
+    );
+
+
+  };
+
+
+
+
+
+  useEffect(() => {
+
+    checkScroll();
+
+  }, []);
+
+
+
+
+
+
+
   const scroll = (
     direction: "left" | "right"
   ) => {
 
 
-    scrollRef.current?.scrollBy({
+    const el =
+      scrollRef.current;
+
+
+    if (!el) return;
+
+
+
+    el.scrollBy({
 
       left:
         direction === "left"
-          ? -320
-          : 320,
+          ? -el.clientWidth
+          : el.clientWidth,
+
 
       behavior: "smooth",
 
     });
 
 
+
+    setTimeout(
+      checkScroll,
+      400
+    );
+
+
   };
+
+
+
+
 
 
 
@@ -50,6 +125,7 @@ export default function TrendingProducts() {
       <div className="mx-auto max-w-7xl px-6">
 
 
+
         <h2 className="mb-8 text-3xl font-extrabold text-gray-900">
 
           🔥 Trending Products
@@ -60,23 +136,39 @@ export default function TrendingProducts() {
 
 
 
+
         <div className="relative">
+
+
+
 
 
 
           {/* Left Arrow */}
 
-          <button
+          {canLeft && (
 
-            onClick={() => scroll("left")}
+            <button
 
-            className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+              onClick={() =>
+                scroll("left")
+              }
 
-          >
+              className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg transition hover:bg-orange-500 hover:text-white"
 
-            <ChevronLeft />
+            >
 
-          </button>
+
+              <ChevronLeft />
+
+
+            </button>
+
+          )}
+
+
+
+
 
 
 
@@ -90,9 +182,12 @@ export default function TrendingProducts() {
 
             ref={scrollRef}
 
-            className="flex gap-6 overflow-x-auto scroll-smooth px-12 pb-4 [scrollbar-width:none]"
+            onScroll={checkScroll}
+
+            className="flex gap-6 overflow-hidden scroll-smooth pb-4"
 
           >
+
 
 
             {trendingProducts.map((product) => (
@@ -102,7 +197,7 @@ export default function TrendingProducts() {
 
                 key={product.id}
 
-                className="min-w-[240px] max-w-[240px]"
+                className="basis-[calc((100%-72px)/4)] shrink-0"
 
               >
 
@@ -120,7 +215,13 @@ export default function TrendingProducts() {
             ))}
 
 
+
           </div>
+
+
+
+
+
 
 
 
@@ -130,17 +231,29 @@ export default function TrendingProducts() {
 
           {/* Right Arrow */}
 
-          <button
+          {canRight && (
 
-            onClick={() => scroll("right")}
+            <button
 
-            className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+              onClick={() =>
+                scroll("right")
+              }
 
-          >
+              className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg transition hover:bg-orange-500 hover:text-white"
 
-            <ChevronRight />
+            >
 
-          </button>
+
+              <ChevronRight />
+
+
+            </button>
+
+          )}
+
+
+
+
 
 
 

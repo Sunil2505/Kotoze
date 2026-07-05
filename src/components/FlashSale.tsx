@@ -1,6 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import ProductCard from "./ProductCard";
 import Countdown from "./Countdown";
@@ -20,10 +24,64 @@ export default function FlashSale() {
     useRef<HTMLDivElement>(null);
 
 
+  const [canLeft, setCanLeft] =
+    useState(false);
+
+
+  const [canRight, setCanRight] =
+    useState(false);
+
+
+
+
   const flashSaleProducts =
     products.filter(
       (product) => product.flashSale
     );
+
+
+
+
+
+  const checkScroll = () => {
+
+
+    const el =
+      scrollRef.current;
+
+
+    if (!el) return;
+
+
+
+    setCanLeft(
+      el.scrollLeft > 0
+    );
+
+
+
+    setCanRight(
+
+      el.scrollLeft + el.clientWidth <
+        el.scrollWidth - 5
+
+    );
+
+
+  };
+
+
+
+
+
+  useEffect(() => {
+
+    checkScroll();
+
+  }, []);
+
+
+
 
 
 
@@ -32,19 +90,37 @@ export default function FlashSale() {
   ) => {
 
 
-    scrollRef.current?.scrollBy({
+    const el =
+      scrollRef.current;
+
+
+    if (!el) return;
+
+
+
+    el.scrollBy({
 
       left:
         direction === "left"
-          ? -320
-          : 320,
+          ? -el.clientWidth
+          : el.clientWidth,
+
 
       behavior: "smooth",
 
     });
 
 
+
+    setTimeout(
+      checkScroll,
+      400
+    );
+
+
   };
+
+
 
 
 
@@ -60,7 +136,7 @@ export default function FlashSale() {
 
 
 
-        {/* Header */}
+
 
         <div className="mb-8 flex items-center justify-between">
 
@@ -98,25 +174,37 @@ export default function FlashSale() {
 
 
 
+
+
         <div className="relative">
+
+
+
 
 
 
           {/* Left */}
 
-          <button
+          {canLeft && (
 
-            onClick={() =>
-              scroll("left")
-            }
+            <button
 
-            className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+              onClick={() =>
+                scroll("left")
+              }
 
-          >
+              className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
 
-            <ChevronLeft />
+            >
 
-          </button>
+              <ChevronLeft />
+
+            </button>
+
+          )}
+
+
+
 
 
 
@@ -130,7 +218,9 @@ export default function FlashSale() {
 
             ref={scrollRef}
 
-            className="flex gap-6 overflow-x-auto scroll-smooth px-12 pb-4 [scrollbar-width:none]"
+            onScroll={checkScroll}
+
+            className="flex gap-6 overflow-hidden scroll-smooth pb-4"
 
           >
 
@@ -143,7 +233,7 @@ export default function FlashSale() {
 
                   key={product.id}
 
-                  className="min-w-[240px] max-w-[240px]"
+                  className="basis-[calc((100%-72px)/4)] shrink-0"
 
                 >
 
@@ -171,25 +261,34 @@ export default function FlashSale() {
 
 
 
+
           {/* Right */}
 
-          <button
+          {canRight && (
 
-            onClick={() =>
-              scroll("right")
-            }
+            <button
 
-            className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+              onClick={() =>
+                scroll("right")
+              }
 
-          >
+              className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
 
-            <ChevronRight />
+            >
 
-          </button>
+              <ChevronRight />
+
+            </button>
+
+          )}
+
+
+
 
 
 
         </div>
+
 
 
 
@@ -211,6 +310,7 @@ export default function FlashSale() {
 
 
         </div>
+
 
 
 
