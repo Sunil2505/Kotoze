@@ -1,14 +1,17 @@
 "use client";
 
 import { use } from "react";
-import { useOrders } from "@/context/OrderContext";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+
+import { useOrders } from "@/context/OrderContext";
 
 import {
   PackageCheck,
   Truck,
   Package,
   Home,
+  ArrowLeft,
 } from "lucide-react";
 
 
@@ -21,6 +24,7 @@ export default function OrderDetailsPage({
 
   const { id } = use(params);
 
+  const router = useRouter();
 
   const { orders } = useOrders();
 
@@ -35,15 +39,21 @@ export default function OrderDetailsPage({
 
     return (
 
-      <main className="min-h-screen bg-gray-50 py-16">
+      <main className="min-h-screen bg-gray-50 p-4">
+
+        <button
+          onClick={() => router.back()}
+          className="rounded-full bg-white px-4 py-2 shadow"
+        >
+          <ArrowLeft size={18} />
+        </button>
 
 
-        <h1 className="text-center text-3xl font-bold text-gray-900">
+        <h1 className="mt-10 text-center text-2xl font-bold">
 
           Order Not Found
 
         </h1>
-
 
       </main>
 
@@ -56,13 +66,32 @@ export default function OrderDetailsPage({
 
   return (
 
-    <main className="min-h-screen bg-gray-50 py-16">
+    <main className="min-h-screen bg-gray-50 py-2">
 
 
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="mx-auto max-w-4xl px-4">
 
 
-        <h1 className="mb-8 text-3xl font-extrabold text-gray-900">
+
+        <button
+
+          onClick={() => router.back()}
+
+          className="mb-3 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold shadow hover:bg-orange-500 hover:text-white"
+
+        >
+
+          <ArrowLeft size={17} />
+
+          Back
+
+        </button>
+
+
+
+
+
+        <h1 className="mb-3 text-2xl font-bold text-gray-900">
 
           Order Details
 
@@ -72,116 +101,117 @@ export default function OrderDetailsPage({
 
 
 
-        <div className="rounded-2xl bg-white p-6 shadow-lg">
+        <div className="grid gap-4 lg:grid-cols-3">
 
 
-          {/* Order Info */}
 
 
-          <div className="flex justify-between">
+
+          {/* LEFT */}
+
+          <div className="h-fit lg:col-span-2 rounded-xl bg-white p-4 shadow">
 
 
-            <div>
+
+            <div className="flex justify-between text-sm">
 
 
-              <p className="font-semibold text-gray-900">
+              <div>
 
-                Order ID: {order.orderId}
+                <p className="font-bold">
 
-              </p>
+                  Order ID: {order.orderId}
+
+                </p>
 
 
-              <p className="mt-2 text-gray-600">
+                <p className="text-gray-500">
 
-                Date: {order.date}
+                  {order.date}
 
-              </p>
+                </p>
+
+              </div>
+
+
+              <span className="font-bold text-green-600">
+
+                Confirmed
+
+              </span>
 
 
             </div>
 
 
 
-            <span className="font-semibold text-green-600">
-
-              Confirmed
-
-            </span>
 
 
-          </div>
+            <div className="mt-4 space-y-3">
 
 
+              {order.items.map((item, index) => (
+
+                <div
+
+                  key={`${item.id}-${index}`}
+
+                  className="flex items-center gap-3 rounded-xl border p-3"
+
+                >
 
 
+                  <Image
 
-          {/* Products */}
+                    src={item.image}
 
+                    alt={item.name}
 
-          <div className="mt-10 space-y-6">
+                    width={65}
 
+                    height={65}
 
-{order.items.map((item, index) => (
+                    className="object-contain"
 
-
-  <div
-
-    key={`${item.id}-${index}`}
-
-    className="flex items-center gap-6"
-
-  >
-
-                <Image
-
-                  src={item.image}
-
-                  alt={item.name}
-
-                  width={130}
-
-                  height={130}
-
-                  className="object-contain"
-
-                />
+                  />
 
 
 
-                <div>
+                  <div>
 
 
-                  <h2 className="text-xl font-bold text-gray-900">
+                    <h2 className="font-bold text-gray-900">
 
-                    {item.name}
+                      {item.name}
 
-                  </h2>
-
-
-
-                  <p className="mt-2 text-gray-700">
-
-                    Quantity: {item.quantity}
-
-                  </p>
+                    </h2>
 
 
+                    <p className="text-sm">
 
-                  <p className="mt-2 font-bold text-orange-500">
+                      Qty: {item.quantity}
 
-                    ₹{item.price.toLocaleString("en-IN")}
+                    </p>
 
-                  </p>
+
+                    <p className="font-bold text-orange-500">
+
+                      ₹{item.price.toLocaleString("en-IN")}
+
+                    </p>
+
+
+                  </div>
 
 
                 </div>
 
 
+              ))}
 
-              </div>
 
+            </div>
 
-            ))}
 
 
           </div>
@@ -192,13 +222,15 @@ export default function OrderDetailsPage({
 
 
 
-          {/* Tracking */}
 
 
-          <div className="mt-10 rounded-xl bg-gray-50 p-6">
+          {/* RIGHT */}
 
 
-            <h2 className="mb-6 text-xl font-bold text-gray-900">
+          <div className="h-fit rounded-xl bg-white p-4 shadow">
+
+
+            <h2 className="mb-4 font-bold">
 
               Track Order
 
@@ -206,84 +238,115 @@ export default function OrderDetailsPage({
 
 
 
-            <div className="space-y-5">
+            <div className="space-y-3 text-sm">
 
 
-              <div className="flex items-center gap-3 text-green-600">
+              <p className="flex gap-2 text-green-600">
+
+                <PackageCheck size={17} />
+
+                Confirmed
+
+              </p>
 
 
-                <PackageCheck />
+              <p className="flex gap-2 text-gray-500">
 
-
-                Order Confirmed
-
-
-              </div>
-
-
-
-
-
-              <div className="flex items-center gap-3 text-gray-500">
-
-
-                <Package />
-
+                <Package size={17} />
 
                 Packed
 
-
-              </div>
-
+              </p>
 
 
+              <p className="flex gap-2 text-gray-500">
 
-
-              <div className="flex items-center gap-3 text-gray-500">
-
-
-                <Truck />
-
+                <Truck size={17} />
 
                 Shipped
 
-
-              </div>
-
+              </p>
 
 
+              <p className="flex gap-2 text-gray-500">
 
-
-              <div className="flex items-center gap-3 text-gray-500">
-
-
-                <Home />
-
+                <Home size={17} />
 
                 Delivered
 
-
-              </div>
+              </p>
 
 
             </div>
 
 
-          </div>
+
+
+
+{/* Payment Details */}
+
+<div className="mt-5 rounded-xl bg-orange-50 p-3">
+
+
+  <h2 className="mb-3 font-bold text-gray-900">
+
+    Payment Details
+
+  </h2>
+
+
+
+  <div className="space-y-2 text-sm">
+
+
+    <div className="flex justify-between text-gray-700">
+
+      <span>Method</span>
+
+      <span className="font-bold">
+
+        Cash On Delivery
+
+      </span>
+
+    </div>
+
+
+
+    <div className="flex justify-between text-gray-700">
+
+      <span>Payment Status</span>
+
+      <span className="font-bold text-orange-600">
+
+        Pending
+
+      </span>
+
+    </div>
+
+
+  </div>
+
+
+</div>
 
 
 
 
 
+{/* Total */}
 
+        <div className="mt-5 border-t pt-4 text-xl font-bold text-gray-900">
 
-          {/* Total */}
+          Total
 
+          <br />
 
-          <div className="mt-8 border-t pt-5 text-xl font-bold text-gray-900">
+          ₹{(order.total || 0).toLocaleString("en-IN")}
 
+        </div>
 
-            Total: ₹{(order.total || 0).toLocaleString("en-IN")}
 
 
           </div>

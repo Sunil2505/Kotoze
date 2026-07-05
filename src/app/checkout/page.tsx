@@ -5,7 +5,12 @@ import { useOrders } from "@/context/OrderContext";
 
 import { useRouter } from "next/navigation";
 
-import { CreditCard, Truck } from "lucide-react";
+import {
+  CreditCard,
+  Truck,
+  ArrowLeft,
+  Wallet,
+} from "lucide-react";
 
 
 export default function CheckoutPage() {
@@ -20,20 +25,36 @@ export default function CheckoutPage() {
 
   const { placeOrder } = useOrders();
 
-
   const router = useRouter();
 
 
 
   return (
 
-    <main className="min-h-screen bg-gray-50 py-12">
+    <main className="min-h-screen bg-gray-50 py-2">
 
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-5xl px-5">
 
 
-        <h1 className="mb-8 text-4xl font-extrabold text-gray-900">
+        {/* Back */}
+
+        <button
+          onClick={() => router.back()}
+          className="mb-3 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow hover:bg-orange-500 hover:text-white"
+        >
+
+          <ArrowLeft size={18} />
+
+          Back
+
+        </button>
+
+
+
+
+
+        <h1 className="mb-3 text-2xl font-extrabold text-gray-900">
 
           Checkout
 
@@ -41,19 +62,24 @@ export default function CheckoutPage() {
 
 
 
-        <div className="grid gap-8 lg:grid-cols-3">
 
 
 
-          {/* Shipping Details */}
+        <div className="grid gap-4 lg:grid-cols-3">
 
 
-          <div className="lg:col-span-2 rounded-2xl bg-white p-6 shadow-lg">
 
 
-            <div className="mb-5 flex items-center gap-2 text-2xl font-bold text-gray-900">
 
-              <Truck />
+          {/* Shipping */}
+
+
+          <div className="lg:col-span-2 rounded-xl bg-white p-4 shadow">
+
+
+            <div className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900">
+
+              <Truck size={20} />
 
               Shipping Details
 
@@ -62,34 +88,85 @@ export default function CheckoutPage() {
 
 
 
-            <div className="grid gap-4">
+
+
+            <div className="grid gap-2.5">
 
 
               <input
                 placeholder="Full Name"
-                className="rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:outline-none"
+                className="rounded-lg border px-3 py-2 text-gray-900 focus:border-orange-500 focus:outline-none"
               />
 
 
               <input
                 placeholder="Mobile Number"
-                className="rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:outline-none"
+                className="rounded-lg border px-3 py-2 text-gray-900 focus:border-orange-500 focus:outline-none"
               />
+
 
 
               <textarea
                 placeholder="Delivery Address"
-                className="rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:outline-none"
+                rows={2}
+                className="rounded-lg border px-3 py-2 text-gray-900 focus:border-orange-500 focus:outline-none"
               />
 
 
-              <input
-                placeholder="Pincode"
-                className="rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-500 focus:border-orange-500 focus:outline-none"
-              />
+
+
+
+              <div className="grid gap-2.5 md:grid-cols-2">
+
+
+                <input
+                  placeholder="City"
+                  className="rounded-lg border px-3 py-2 text-gray-900 focus:border-orange-500 focus:outline-none"
+                />
+
+
+                <input
+                  placeholder="Pincode"
+                  className="rounded-lg border px-3 py-2 text-gray-900 focus:border-orange-500 focus:outline-none"
+                />
+
+
+              </div>
 
 
             </div>
+
+
+
+
+
+
+
+            {/* Payment */}
+
+
+            <div className="mt-4">
+
+
+              <h2 className="mb-2 flex items-center gap-2 text-lg font-bold text-gray-900">
+
+                <Wallet size={20} />
+
+                Payment Method
+
+              </h2>
+
+
+
+              <div className="rounded-lg border bg-orange-50 px-3 py-2 text-sm font-semibold text-orange-600">
+
+                💵 Cash On Delivery
+
+              </div>
+
+
+            </div>
+
 
 
           </div>
@@ -98,13 +175,17 @@ export default function CheckoutPage() {
 
 
 
-          {/* Order Summary */}
 
 
-          <div className="rounded-2xl bg-white p-6 shadow-lg">
+
+          {/* Summary */}
 
 
-            <h2 className="mb-5 text-2xl font-bold text-gray-900">
+          <div className="rounded-xl bg-white p-4 shadow">
+
+
+
+            <h2 className="mb-4 text-xl font-bold text-gray-900">
 
               Order Summary
 
@@ -113,19 +194,39 @@ export default function CheckoutPage() {
 
 
 
-            <div className="flex justify-between text-lg text-gray-800">
+
+            <div className="flex justify-between text-sm text-gray-800">
+
+              <span>Items</span>
+
+              <b>{cart.length}</b>
+
+            </div>
+
+
+
+
+
+            <hr className="my-3" />
+
+
+
+
+
+
+            <div className="flex justify-between text-xl font-bold text-gray-900">
 
               <span>Total</span>
 
-
-              <b>
-
+              <span>
                 ₹{cartTotal.toLocaleString("en-IN")}
-
-              </b>
-
+              </span>
 
             </div>
+
+
+
+
 
 
 
@@ -141,8 +242,7 @@ export default function CheckoutPage() {
                     "KTZ-" + Date.now(),
 
                   date:
-                    new Date()
-                      .toLocaleDateString(),
+                    new Date().toLocaleDateString(),
 
                   items: cart,
 
@@ -150,32 +250,32 @@ export default function CheckoutPage() {
 
                 });
 
+
+
                 clearCart();
 
 
-                router.push(
-                  "/order-success"
-                );
+                router.push("/order-success");
 
 
               }}
 
 
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-bold text-white hover:bg-orange-600"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-2.5 font-bold text-white hover:bg-orange-600"
+
             >
 
-
-              <CreditCard />
-
+              <CreditCard size={18} />
 
               Place Order
-
 
             </button>
 
 
 
+
           </div>
+
 
 
         </div>

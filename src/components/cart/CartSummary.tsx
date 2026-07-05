@@ -1,6 +1,6 @@
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+
 
 
 type Props = {
