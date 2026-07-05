@@ -48,7 +48,7 @@ export function CartProvider({
 
 
 
-  // Load cart when app starts
+  // Load cart
 
   useEffect(() => {
 
@@ -58,7 +58,9 @@ export function CartProvider({
 
     if (savedCart) {
 
-      setCart(JSON.parse(savedCart));
+      setCart(
+        JSON.parse(savedCart)
+      );
 
     }
 
@@ -67,7 +69,7 @@ export function CartProvider({
 
 
 
-  // Save cart changes
+  // Save cart
 
   useEffect(() => {
 
@@ -76,16 +78,19 @@ export function CartProvider({
       JSON.stringify(cart)
     );
 
-
   }, [cart]);
 
 
 
 
 
+  // Add to cart
+
   const addToCart = (item: CartItem) => {
 
+
     setCart((prev) => {
+
 
       const existing =
         prev.find(
@@ -93,49 +98,61 @@ export function CartProvider({
         );
 
 
+
       if (existing) {
 
+
         return prev.map((p) =>
+
 
           p.id === item.id
 
             ? {
                 ...p,
                 quantity:
-                  p.quantity + 1,
+                  p.quantity +
+                  item.quantity,
               }
 
             : p
 
         );
 
+
       }
+
 
 
       return [
         ...prev,
-        {
-          ...item,
-          quantity: 1,
-        },
+        item,
       ];
 
 
     });
 
+
   };
 
 
 
 
+
+
+  // Remove
 
   const removeFromCart = (id: number) => {
 
+
     setCart((prev) =>
+
       prev.filter(
-        (item) => item.id !== id
+        (item) =>
+          item.id !== id
       )
+
     );
+
 
   };
 
@@ -143,11 +160,18 @@ export function CartProvider({
 
 
 
+
+
+  // Increase
+
   const increaseQuantity = (id: number) => {
+
 
     setCart((prev) =>
 
+
       prev.map((item) =>
+
 
         item.id === id
 
@@ -159,9 +183,12 @@ export function CartProvider({
 
           : item
 
+
       )
 
+
     );
+
 
   };
 
@@ -170,12 +197,17 @@ export function CartProvider({
 
 
 
+  // Decrease
+
   const decreaseQuantity = (id: number) => {
+
 
     setCart((prev) =>
 
+
       prev
         .map((item) =>
+
 
           item.id === id
 
@@ -187,26 +219,36 @@ export function CartProvider({
 
             : item
 
+
         )
+
 
         .filter(
+
           (item) =>
             item.quantity > 0
+
         )
 
+
     );
+
 
   };
 
 
 
 
+
+
+  // Clear
 
   const clearCart = () => {
 
     setCart([]);
 
   };
+
 
 
 
@@ -225,10 +267,12 @@ export function CartProvider({
 
 
 
+
   const cartTotal =
     cart.reduce(
 
       (total, item) =>
+
         total +
         item.price *
           item.quantity,
@@ -236,6 +280,7 @@ export function CartProvider({
       0
 
     );
+
 
 
 
@@ -278,7 +323,10 @@ export function CartProvider({
 
 
 
+
+
 export function useCart() {
+
 
   const context =
     useContext(CartContext);
@@ -292,6 +340,7 @@ export function useCart() {
     );
 
   }
+
 
 
   return context;

@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -36,6 +36,10 @@ export default function ProductDetails({
 
   const { toggleWishlist } = useWishlist();
 
+  const [quantity, setQuantity] =
+    useState(1);
+
+
 
   useEffect(() => {
 
@@ -48,9 +52,13 @@ export default function ProductDetails({
 
 
 
-  const product = products.find(
-    (item) => item.id === Number(id)
-  );
+
+  const product =
+    products.find(
+      (item) =>
+        item.id === Number(id)
+    );
+
 
 
   if (!product) {
@@ -59,7 +67,7 @@ export default function ProductDetails({
 
       <main className="py-20">
 
-        <h1 className="text-center text-3xl font-bold text-gray-900">
+        <h1 className="text-center text-3xl font-bold">
 
           Product Not Found
 
@@ -73,16 +81,21 @@ export default function ProductDetails({
 
 
 
+
+
   return (
 
-    <main className="mx-auto max-w-7xl px-6 py-6">
+    <main className="mx-auto max-w-6xl px-6 py-3">
 
 
-      {/* Back Button */}
+      {/* Back */}
 
       <button
+
         onClick={() => router.back()}
-        className="mb-6 flex items-center gap-2 rounded-full bg-white px-5 py-3 font-semibold text-gray-700 shadow transition hover:bg-orange-500 hover:text-white"
+
+        className="mb-3 flex items-center gap-2 rounded-full bg-white px-4 py-2white"
+
       >
 
         <ArrowLeft size={20} />
@@ -91,13 +104,18 @@ export default function ProductDetails({
 
       </button>
 
-      <div className="grid gap-12 lg:grid-cols-2">
 
 
-        {/* Product Image */}
 
 
-        <div className="flex items-center justify-center rounded-2xl bg-white p-10 shadow-lg">
+
+      <div className="grid gap-6 lg:grid-cols-2">
+
+
+        {/* Image */}
+
+
+        <div className="group flex h-[320px] items-center justify-center overflow-hidden rounded-2xl bg-white p-4 shadow">
 
 
           <Image
@@ -106,11 +124,11 @@ export default function ProductDetails({
 
             alt={product.name}
 
-            width={450}
+            width={280}
 
-            height={450}
+            height={280}
 
-            className="object-contain"
+            className="object-contain transition-transform duration-500 group-hover:scale-125"
 
           />
 
@@ -123,13 +141,14 @@ export default function ProductDetails({
 
 
 
-        {/* Product Details */}
+
+        {/* Details */}
 
 
         <div>
 
 
-          <h1 className="text-4xl font-extrabold text-gray-900">
+          <h1 className="text-2xl font-extrabold text-gray-900">
 
             {product.name}
 
@@ -159,8 +178,7 @@ export default function ProductDetails({
             )}
 
 
-
-            <span className="font-medium text-gray-600">
+            <span className="text-gray-600">
 
               ({product.reviews} Reviews)
 
@@ -174,17 +192,19 @@ export default function ProductDetails({
 
 
 
-          <div className="mt-6 flex flex-wrap items-center gap-4">
+
+          <div className="mt-5 flex items-center gap-4">
 
 
-            <span className="text-3xl font-extrabold text-orange-600">
+            <span className="text-2xl font-extrabold text-orange-600">
 
               ₹{product.price.toLocaleString("en-IN")}
 
             </span>
 
 
-            <span className="text-2xl text-gray-500 line-through">
+
+            <span className="text-xl text-gray-500 line-through">
 
               ₹{product.oldPrice.toLocaleString("en-IN")}
 
@@ -206,8 +226,9 @@ export default function ProductDetails({
 
 
 
-          <div className="mt-6 space-y-3 text-lg font-medium text-gray-800">
 
+
+          <div className="mt-5 space-y-3 font-medium text-gray-800">
 
             <p>✓ In Stock</p>
 
@@ -215,9 +236,84 @@ export default function ProductDetails({
 
             <p>🔒 100% Secure Payment</p>
 
-            <p>
-              🏷 Brand: {product.brand}
-            </p>
+            <p>🏷 Brand: {product.brand}</p>
+
+          </div>
+
+
+
+
+
+
+
+
+          {/* Quantity */}
+
+
+          <div className="mt-7 flex items-center gap-4">
+
+
+            <span className="font-bold">
+
+              Quantity
+
+            </span>
+
+
+
+            <div className="flex overflow-hidden rounded-xl border">
+
+
+              <button
+
+                onClick={() =>
+                  setQuantity(
+                    Math.max(
+                      1,
+                      quantity - 1
+                    )
+                  )
+                }
+
+                className="px-5 py-2 text-xl font-bold"
+
+              >
+
+                -
+
+              </button>
+
+
+
+
+              <span className="border-x px-6 py-2 font-bold">
+
+                {quantity}
+
+              </span>
+
+
+
+
+
+              <button
+
+                onClick={() =>
+                  setQuantity(
+                    quantity + 1
+                  )
+                }
+
+                className="px-5 py-2 text-xl font-bold"
+
+              >
+
+                +
+
+              </button>
+
+
+            </div>
 
 
           </div>
@@ -227,8 +323,13 @@ export default function ProductDetails({
 
 
 
-          <div className="mt-10 flex flex-wrap gap-4">
 
+
+
+          {/* Buttons */}
+
+
+          <div className="mt-8 flex flex-wrap gap-4">
 
 
             <button
@@ -245,20 +346,19 @@ export default function ProductDetails({
 
                   image: product.image,
 
-                  quantity: 1,
+                  quantity,
 
                 })
 
               }
 
 
-              className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-bold text-white transition hover:bg-orange-600"
+              className="flex items-center gap-2 rounded-xl bg-orange-500 px-6 py-3 font-bold text-white hover:bg-orange-600"
 
             >
 
 
               <ShoppingCart />
-
 
               Add to Cart
 
@@ -270,15 +370,13 @@ export default function ProductDetails({
 
 
 
-            <button
 
-              className="rounded-xl bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-700"
-
-            >
+            <button className="rounded-xl bg-green-600 px-8 py-4 font-bold text-white hover:bg-green-700">
 
               Buy Now
 
             </button>
+
 
 
 
@@ -303,17 +401,13 @@ export default function ProductDetails({
 
               }
 
-
-              className="rounded-xl border border-gray-300 p-4 text-gray-800 transition hover:border-orange-500 hover:text-orange-500"
+              className="rounded-xl border p-4 hover:text-orange-500"
 
             >
 
-
               <Heart />
 
-
             </button>
-
 
 
 
@@ -324,6 +418,9 @@ export default function ProductDetails({
 
 
       </div>
+
+
+
 
 
 
