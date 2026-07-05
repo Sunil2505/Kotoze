@@ -190,17 +190,16 @@ export default function TrendingProducts() {
 
 
 
-            {trendingProducts.map((product) => (
+                {trendingProducts.map((product, index) => (
 
 
-              <div
+                  <div
 
-                key={product.id}
+                    key={`${product.id}-${index}`}
 
-                className="basis-[calc((100%-72px)/4)] shrink-0"
+                    className="basis-[calc((100%-72px)/4)] shrink-0"
 
-              >
-
+                  >
 
                 <ProductCard
 
