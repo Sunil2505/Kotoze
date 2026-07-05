@@ -1,39 +1,51 @@
-import Image from "next/image";
-import { Star } from "lucide-react";
+"use client";
 
-const products = [
-  {
-    id: 1,
-    name: "Bluetooth Speaker",
-    price: "₹1,999",
-    image: "/images/products/headphones.jpg",
-  },
-  {
-    id: 2,
-    name: "Gaming Headset",
-    price: "₹3,499",
-    image: "/images/products/headphones.jpg",
-  },
-  {
-    id: 3,
-    name: "Smart Watch",
-    price: "₹4,999",
-    image: "/images/products/headphones.jpg",
-  },
-  {
-    id: 4,
-    name: "Wireless Earbuds",
-    price: "₹2,299",
-    image: "/images/products/headphones.jpg",
-  },
-];
+import { useRef } from "react";
+
+import ProductCard from "@/components/ProductCard";
+
+import { products } from "@/data/products";
+
+import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 
 export default function RelatedProducts() {
 
+
+  const scrollRef =
+    useRef<HTMLDivElement>(null);
+
+
+
+  const scroll = (
+    direction: "left" | "right"
+  ) => {
+
+
+    scrollRef.current?.scrollBy({
+
+      left:
+        direction === "left"
+          ? -320
+          : 320,
+
+      behavior: "smooth",
+
+    });
+
+
+  };
+
+
+
+
+
   return (
 
-    <section className="mt-20">
+    <section className="mt-10">
 
 
       <h2 className="mb-8 text-3xl font-extrabold text-gray-900">
@@ -45,96 +57,93 @@ export default function RelatedProducts() {
 
 
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
-
-        {products.map((product) => (
-
-
-          <div
-
-            key={product.id}
-
-            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl"
-
-          >
+      <div className="relative">
 
 
 
-            <Image
+        {/* Left */}
 
-              src={product.image}
+        <button
 
-              alt={product.name}
+          onClick={() =>
+            scroll("left")
+          }
 
-              width={250}
+          className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
 
-              height={250}
+        >
 
-              className="mx-auto h-48 w-full object-contain"
+          <ChevronLeft />
 
-            />
+        </button>
 
 
 
 
-            <h3 className="mt-5 text-lg font-bold text-gray-900">
-
-              {product.name}
-
-            </h3>
 
 
+        {/* Products */}
+
+        <div
+
+          ref={scrollRef}
+
+          className="flex gap-6 overflow-x-auto scroll-smooth px-12 pb-4 [scrollbar-width:none]"
+
+        >
 
 
-            <div className="mt-2 flex items-center gap-1 text-yellow-400">
+          {products.map((product) => (
 
 
-              {[...Array(5)].map((_, index) => (
+            <div
 
-                <Star
+              key={product.id}
 
-                  key={index}
+              className="min-w-[240px] max-w-[240px]"
 
-                  size={16}
+            >
 
-                  fill="currentColor"
 
-                />
+              <ProductCard
 
-              ))}
+                product={product}
+
+              />
 
 
             </div>
 
 
+          ))}
 
 
-
-            <p className="mt-3 text-2xl font-extrabold text-orange-600">
-
-              {product.price}
-
-            </p>
+        </div>
 
 
 
 
 
-            <button className="mt-5 w-full rounded-xl bg-orange-500 py-3 font-bold text-white transition hover:bg-orange-600">
-
-
-              View Product
-
-
-            </button>
 
 
 
-          </div>
+        {/* Right */}
 
+        <button
 
-        ))}
+          onClick={() =>
+            scroll("right")
+          }
+
+          className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+
+        >
+
+          <ChevronRight />
+
+        </button>
+
 
 
       </div>

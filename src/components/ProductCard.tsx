@@ -28,12 +28,12 @@ export default function ProductCard({
 
   return (
 
-    <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+    <div className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg">
 
 
-      {/* Discount */}
+      {/* Top */}
 
-      <div className="flex items-center justify-between bg-orange-500 px-5 py-3">
+      <div className="flex items-center justify-between bg-orange-500 px-4 py-2">
 
 
         <span className="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white">
@@ -43,9 +43,9 @@ export default function ProductCard({
         </span>
 
 
-        <button className="rounded-full bg-white p-2 text-gray-700 transition hover:text-red-500">
+        <button className="rounded-full bg-white p-2 text-gray-700 hover:text-red-500">
 
-          <Heart size={18} />
+          <Heart size={16} />
 
         </button>
 
@@ -55,11 +55,13 @@ export default function ProductCard({
 
 
 
+
       <Link href={`/products/${product.id}`}>
 
 
+        {/* Image */}
 
-        <div className="flex h-56 items-center justify-center bg-white p-4">
+        <div className="flex h-40 items-center justify-center bg-white p-3">
 
 
           <Image
@@ -68,11 +70,11 @@ export default function ProductCard({
 
             alt={product.name}
 
-            width={220}
+            width={180}
 
-            height={220}
+            height={180}
 
-            className="h-44 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+            className="h-32 w-auto object-contain transition group-hover:scale-110"
 
           />
 
@@ -83,10 +85,12 @@ export default function ProductCard({
 
 
 
-        <div className="p-4">
+        {/* Details */}
+
+        <div className="p-3">
 
 
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-base font-bold text-gray-900">
 
             {product.name}
 
@@ -98,25 +102,24 @@ export default function ProductCard({
           <div className="mt-2 flex items-center gap-1">
 
 
-            {[...Array(product.rating)].map((_, index) => (
+            {[...Array(product.rating)].map(
+              (_, index) => (
+
+                <Star
+
+                  key={index}
+
+                  size={14}
+
+                  className="fill-yellow-400 text-yellow-400"
+
+                />
+
+              )
+            )}
 
 
-              <Star
-
-                key={index}
-
-                size={16}
-
-                className="fill-yellow-400 text-yellow-400"
-
-              />
-
-
-            ))}
-
-
-
-            <span className="ml-2 text-sm text-gray-500">
+            <span className="ml-1 text-xs text-gray-500">
 
               ({product.reviews})
 
@@ -132,24 +135,21 @@ export default function ProductCard({
           <div className="mt-2 flex items-center gap-2">
 
 
-            <span className="text-2xl font-bold text-orange-500">
+            <span className="text-xl font-bold text-orange-500">
 
               ₹{product.price.toLocaleString("en-IN")}
 
             </span>
 
 
-            <span className="text-sm text-gray-400 line-through">
-
+            <span className="text-xs text-gray-400 line-through">
 
               ₹{product.oldPrice.toLocaleString("en-IN")}
-
 
             </span>
 
 
           </div>
-
 
 
         </div>
@@ -161,7 +161,7 @@ export default function ProductCard({
 
 
 
-      <div className="px-4 pb-4">
+      <div className="px-3 pb-3">
 
 
         <button
@@ -184,22 +184,18 @@ export default function ProductCard({
 
           }
 
-
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 py-2 text-sm font-bold text-white hover:bg-orange-600"
 
         >
 
-
-          <ShoppingCart size={20} />
+          <ShoppingCart size={18} />
 
           Add to Cart
-
 
         </button>
 
 
       </div>
-
 
 
     </div>

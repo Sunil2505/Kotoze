@@ -1,81 +1,224 @@
+"use client";
+
+import { useRef } from "react";
+
 import ProductCard from "./ProductCard";
 import Countdown from "./Countdown";
 
-const flashSaleProducts = [
-  {
-    name: "Bluetooth Speaker",
-    price: "₹1,999",
-    oldPrice: "₹2,999",
-    image: "/images/products/speaker.jpg",
-    rating: "★★★★★",
-    reviews: 86,
-    discount: "33% OFF",
-  },
-  {
-    name: "Gaming Mouse",
-    price: "₹899",
-    oldPrice: "₹1,299",
-    image: "/images/products/mouse.jpg",
-    rating: "★★★★★",
-    reviews: 124,
-    discount: "30% OFF",
-  },
-  {
-    name: "Power Bank",
-    price: "₹1,299",
-    oldPrice: "₹1,799",
-    image: "/images/products/powerbank.jpg",
-    rating: "★★★★☆",
-    reviews: 73,
-    discount: "28% OFF",
-  },
-  {
-    name: "Wireless Earbuds",
-    price: "₹2,499",
-    oldPrice: "₹3,499",
-    image: "/images/products/earbuds.jpg",
-    rating: "★★★★★",
-    reviews: 210,
-    discount: "29% OFF",
-  },
-];
+import { products } from "@/data/products";
+
+import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
 
 export default function FlashSale() {
+
+
+  const scrollRef =
+    useRef<HTMLDivElement>(null);
+
+
+  const flashSaleProducts =
+    products.filter(
+      (product) => product.flashSale
+    );
+
+
+
+  const scroll = (
+    direction: "left" | "right"
+  ) => {
+
+
+    scrollRef.current?.scrollBy({
+
+      left:
+        direction === "left"
+          ? -320
+          : 320,
+
+      behavior: "smooth",
+
+    });
+
+
+  };
+
+
+
+
+
+
   return (
-    <section className="bg-orange-50 py-14">
+
+    <section className="bg-orange-50 py-8">
+
+
       <div className="mx-auto max-w-7xl px-6">
+
+
+
         {/* Header */}
-        <div className="mb-10 flex items-center justify-between">
+
+        <div className="mb-8 flex items-center justify-between">
+
+
           <div>
-            <h2 className="text-4xl font-extrabold text-orange-500">
+
+
+            <h2 className="text-3xl font-extrabold text-orange-500">
+
               🔥 Flash Sale
+
             </h2>
 
-            <p className="mt-2 text-gray-600">
+
+            <p className="mt-2 text-sm text-gray-600">
+
               Limited time deals. Grab them before they're gone!
+
             </p>
+
+
           </div>
 
+
+
           <Countdown />
+
+
         </div>
 
-        {/* Products */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {flashSaleProducts.map((product) => (
-            <ProductCard
-              key={product.name}
-              product={product}
-            />
-          ))}
-        </div>
 
-        {/* View All */}
-        <div className="mt-10 text-center">
-          <button className="rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-all duration-300 hover:bg-orange-600 hover:shadow-lg">
-            View All Deals
+
+
+
+
+
+
+        <div className="relative">
+
+
+
+          {/* Left */}
+
+          <button
+
+            onClick={() =>
+              scroll("left")
+            }
+
+            className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+
+          >
+
+            <ChevronLeft />
+
           </button>
+
+
+
+
+
+
+
+          {/* Products */}
+
+          <div
+
+            ref={scrollRef}
+
+            className="flex gap-6 overflow-x-auto scroll-smooth px-12 pb-4 [scrollbar-width:none]"
+
+          >
+
+
+            {flashSaleProducts.map(
+              (product) => (
+
+
+                <div
+
+                  key={product.id}
+
+                  className="min-w-[240px] max-w-[240px]"
+
+                >
+
+
+                  <ProductCard
+
+                    product={product}
+
+                  />
+
+
+                </div>
+
+
+              )
+            )}
+
+
+          </div>
+
+
+
+
+
+
+
+
+          {/* Right */}
+
+          <button
+
+            onClick={() =>
+              scroll("right")
+            }
+
+            className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+
+          >
+
+            <ChevronRight />
+
+          </button>
+
+
+
         </div>
+
+
+
+
+
+
+
+
+        <div className="mt-6 text-center">
+
+
+          <button className="rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white hover:bg-orange-600">
+
+
+            View All Deals
+
+
+          </button>
+
+
+        </div>
+
+
+
       </div>
+
+
     </section>
+
   );
+
 }
