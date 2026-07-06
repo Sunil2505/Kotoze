@@ -179,7 +179,7 @@ export default function ProductsPage() {
           {/* Filter Sidebar */}
 
 
-          <aside className="h-fit rounded-2xl bg-white p-6 shadow">
+          <aside className="rounded-2xl bg-white p-6 shadow">
 
 
             <div className="mb-6 flex items-center justify-between">
@@ -331,8 +331,70 @@ export default function ProductsPage() {
 
             </div>
 
+<div className="mt-6 overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-md">
 
 
+  <div className="bg-orange-500 px-4 py-3">
+
+
+    <h3 className="text-base font-extrabold text-white">
+
+      🔥 Deal Zone
+
+    </h3>
+
+
+  </div>
+
+
+
+
+
+  <div className="p-4">
+
+
+    <p className="text-sm font-medium text-gray-600">
+
+      Limited time offers
+
+    </p>
+
+
+
+
+    <h2 className="mt-3 text-3xl font-black text-orange-500">
+
+      50% OFF
+
+    </h2>
+
+
+
+
+    <p className="mt-1 text-xs text-gray-500">
+
+      On top selling products
+
+    </p>
+
+
+
+
+
+    <button className="mt-5 w-full rounded-lg bg-orange-500 py-2 text-sm font-bold text-white transition hover:bg-orange-600">
+
+
+      View Deals
+
+
+    </button>
+
+
+
+  </div>
+
+
+</div>
           </aside>
 
 
