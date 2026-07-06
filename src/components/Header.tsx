@@ -15,6 +15,8 @@ import {
   Search,
   ShoppingCart,
   User,
+  Menu,
+  X,
 } from "lucide-react";
 
 
@@ -35,8 +37,10 @@ export default function Header() {
   const { cartCount } =
     useCart();
 
+
   const { wishlistCount } =
     useWishlist();
+
 
   const { isLoggedIn } =
     useAuth();
@@ -48,12 +52,19 @@ export default function Header() {
   } = useSearch();
 
 
+
   const [selectedIndex, setSelectedIndex] =
     useState(-1);
 
 
   const [searchOpen, setSearchOpen] =
     useState(false);
+
+
+  const [mobileMenu, setMobileMenu] =
+    useState(false);
+
+
 
 
 
@@ -97,6 +108,7 @@ export default function Header() {
 
 
 
+
   const handleKeyDown = (
     e: KeyboardEvent<HTMLInputElement>
   ) => {
@@ -104,7 +116,9 @@ export default function Header() {
 
     if (e.key === "ArrowDown") {
 
+
       e.preventDefault();
+
 
       setSelectedIndex((prev) =>
 
@@ -114,14 +128,18 @@ export default function Header() {
 
       );
 
+
     }
+
 
 
 
 
     if (e.key === "ArrowUp") {
 
+
       e.preventDefault();
+
 
       setSelectedIndex((prev) =>
 
@@ -131,7 +149,10 @@ export default function Header() {
 
       );
 
+
     }
+
+
 
 
 
@@ -178,42 +199,25 @@ export default function Header() {
 
 
   };
-
-
-
-
-
-
-
-
-  return (
+    return (
 
     <header className="sticky top-0 z-50 bg-white shadow-sm">
 
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-1">
-
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1 md:px-6 md:py-2">
 
 
         {/* Logo */}
 
         <Link href="/">
 
-          <Image
-
-            src="/images/logo/kotoze-logo.png"
-
-            alt="Kotoze Logo"
-
-            width={90}
-
-            height={35}
-
-            priority
-
-            className="object-contain"
-
-          />
+        <Image
+          src="/images/logo/kotoze-logo.png"
+          alt="Kotoze Logo"
+          width={70}
+          height={28}
+          className="md:h-auto md:w-[90px]"
+        />
 
         </Link>
 
@@ -225,175 +229,86 @@ export default function Header() {
 
         {/* Search */}
 
-        <div className="relative mx-8 max-w-4xl flex-1">
+        <div className="relative hidden flex-1 md:block">
 
 
           <div className="relative rounded-full border border-gray-300 bg-white shadow-sm">
 
 
-            <Search
-
-              size={20}
-
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-
-            />
-
-
-
-            <input
-
-              type="text"
-
-              value={search}
-
-              onFocus={() =>
-                setSearchOpen(true)
-              }
-
-              onChange={(e) => {
-
-                setSearch(e.target.value);
-
-                setSelectedIndex(-1);
-
-              }}
-
-              onKeyDown={handleKeyDown}
-
-              placeholder="Search products..."
-
-              className="w-full rounded-full bg-transparent py-2 pl-12 pr-4 text-gray-900 placeholder:text-gray-500 focus:outline-none"
-
-            />
-
-
           </div>
-                    {/* Suggestions */}
+
+
+
+
+
+
+          {/* Suggestions */}
 
           {searchOpen && (
 
-            <div className="absolute left-0 top-14 z-50 w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+            <div className="absolute top-14 z-50 w-full rounded-2xl bg-white shadow-2xl">
 
 
-              {search.trim() === "" && (
-
-                <p className="px-4 py-2 text-xs font-semibold text-gray-500">
-
-                  Popular Searches
-
-                </p>
-
-              )}
+              {suggestions.map((product,index)=>(
 
 
+                <div
+
+                  key={product.id}
+
+                  onClick={()=>{
+                    router.push(`/products/${product.id}`);
+                    setSearch("");
+                    setSearchOpen(false);
+                  }}
+
+                  className={`flex cursor-pointer items-center gap-3 border-b px-4 py-2
+                  ${
+                    selectedIndex===index
+                    ? "bg-gray-100"
+                    : "hover:bg-gray-50"
+                  }`}
+
+                >
 
 
-              {suggestions.length > 0 ? (
-
-
-                suggestions.map((product, index) => (
-
-
-                  <div
-
-                    key={product.id}
-
-                    onClick={() => {
-
-                      router.push(
-                        `/products/${product.id}`
-                      );
-
-                      setSearch("");
-
-                      setSearchOpen(false);
-
-                      setSelectedIndex(-1);
-
-                    }}
-
-
-                    className={`flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-2 transition-all duration-200
-                    ${
-                      selectedIndex === index
-                        ? "bg-gray-100"
-                        : "hover:bg-gray-50"
-                    }`}
-
-                  >
-
-
-                  {search.trim() === "" ? (
+                  {search.trim()==="" ? (
 
                     <Search
-
                       size={18}
-
                       className="text-gray-400"
-
                     />
 
-                  ) : (
-
+                  ):(
 
                     <Image
-
                       src={product.image}
-
                       alt={product.name}
-
                       width={40}
-
                       height={40}
-
-                      className="h-10 w-10 rounded-lg bg-gray-50 object-contain p-1"
-
+                      className="h-10 w-10 object-contain"
                     />
-
 
                   )}
 
 
-                    <div>
+                  <div>
 
+                    <p className="text-sm font-semibold">
+                      {product.name}
+                    </p>
 
-                      <h3 className="text-sm font-semibold text-gray-900">
-
-                        {product.name}
-
-                      </h3>
-
-
-
-                      <p className="text-xs text-gray-500">
-
-                        {product.brand}
-
-                      </p>
-
-
-                    </div>
-
-
+                    <p className="text-xs text-gray-500">
+                      {product.brand}
+                    </p>
 
                   </div>
 
 
-                ))
+                </div>
 
 
-              ) : (
-
-
-                <p className="p-4 text-center text-gray-500">
-
-                  No products found
-
-                </p>
-
-
-              )}
+              ))}
 
 
             </div>
@@ -412,33 +327,23 @@ export default function Header() {
 
 
 
+
         {/* Icons */}
 
-        <div className="flex items-center gap-6 text-gray-700">
+        <div className="flex items-center gap-5 text-gray-700">
 
 
-          <Link
+          <Link href="/wishlist" className="relative">
 
-            href="/wishlist"
-
-            className="relative hover:text-orange-500"
-
-          >
-
-
-            <Heart size={24} />
-
+            <Heart size={23}/>
 
             {wishlistCount > 0 && (
 
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
-
+              <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-1 text-xs text-white">
                 {wishlistCount}
-
               </span>
 
             )}
-
 
           </Link>
 
@@ -447,30 +352,29 @@ export default function Header() {
 
 
 
+          <Link href="/cart" className="relative">
 
-
-          <Link
-
-            href="/cart"
-
-            className="relative hover:text-orange-500"
-
-          >
-
-
-            <ShoppingCart size={24} />
-
+            <ShoppingCart size={23}/>
 
             {cartCount > 0 && (
 
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
-
+              <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-1 text-xs text-white">
                 {cartCount}
-
               </span>
 
             )}
 
+          </Link>
+
+
+
+
+
+
+
+          <Link href={isLoggedIn ? "/account" : "/login"}>
+
+            <User size={23}/>
 
           </Link>
 
@@ -481,23 +385,21 @@ export default function Header() {
 
 
 
-          <Link
+          {/* Mobile Button */}
 
-            href={
-              isLoggedIn
-                ? "/account"
-                : "/login"
+          <button
+
+            className="md:hidden"
+
+            onClick={() =>
+              setMobileMenu(!mobileMenu)
             }
-
-            className="hover:text-orange-500"
 
           >
 
+            {mobileMenu ? <X/> : <Menu/>}
 
-            <User size={24} />
-
-
-          </Link>
+          </button>
 
 
         </div>
@@ -513,43 +415,80 @@ export default function Header() {
 
 
 
-      {/* Navigation */}
 
-      <div className="border-t border-gray-200">
+      {/* Desktop Nav */}
 
-
-        <nav className="mx-auto flex max-w-7xl gap-10 px-6 py-2 text-sm font-medium text-gray-700">
+      <nav className="hidden border-t px-6 py-2 md:flex justify-center gap-10 text-sm font-medium">
 
 
-          <Link href="/">
-            Home
-          </Link>
+        <Link href="/">Home</Link>
+
+        <Link href="/products">Products</Link>
+
+        <Link href="/categories">Categories</Link>
+
+        <Link href="/offers">Offers</Link>
+
+        <Link href="/contact">Contact</Link>
 
 
-          <Link href="/products">
-            Products
-          </Link>
+      </nav>
 
 
-          <Link href="/categories">
-            Categories
-          </Link>
 
 
-          <Link href="/offers">
-            Offers
-          </Link>
 
 
-          <Link href="/contact">
-            Contact
-          </Link>
 
 
-        </nav>
+
+    
+
+{mobileMenu && (
+
+  <div className="border-t border-gray-100 bg-white shadow-md md:hidden">
 
 
-      </div>
+    <nav className="flex flex-col px-6 py-2 text-sm font-medium text-gray-800">
+
+
+      {[
+        ["Home", "/"],
+        ["Products", "/products"],
+        ["Categories", "/categories"],
+        ["Offers", "/offers"],
+        ["Contact", "/contact"],
+      ].map(([name, path]) => (
+
+
+        <Link
+
+          key={name}
+
+          href={path}
+
+          onClick={() =>
+            setMobileMenu(false)
+          }
+
+          className="rounded-md px-3 py-1.5 leading-5 transition hover:bg-orange-50 hover:text-orange-500"
+
+        >
+
+          {name}
+
+        </Link>
+
+
+      ))}
+
+
+    </nav>
+
+
+  </div>
+
+)}
 
 
 

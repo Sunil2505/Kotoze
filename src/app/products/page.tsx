@@ -6,6 +6,11 @@ import ProductCard from "@/components/ProductCard";
 
 import { products } from "@/data/products";
 
+import {
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
+
 
 export default function ProductsPage() {
 
@@ -22,6 +27,10 @@ export default function ProductsPage() {
     useState("");
 
 
+  const [filterOpen, setFilterOpen] =
+    useState(false);
+
+
 
 
 
@@ -36,6 +45,7 @@ export default function ProductsPage() {
     ),
 
   ];
+
 
 
 
@@ -86,7 +96,6 @@ export default function ProductsPage() {
 
 
 
-
   if (sort === "low") {
 
 
@@ -127,8 +136,6 @@ export default function ProductsPage() {
 
 
 
-
-
   const clearFilters = () => {
 
 
@@ -148,6 +155,169 @@ export default function ProductsPage() {
 
 
 
+  const FilterContent = () => (
+
+    <>
+
+
+      <div className="mb-6 flex items-center justify-between">
+
+
+        <h2 className="text-xl font-bold">
+
+          Filters
+
+        </h2>
+
+
+        <button
+
+          onClick={clearFilters}
+
+          className="text-sm font-semibold text-orange-500"
+
+        >
+
+          Clear
+
+        </button>
+
+
+      </div>
+
+            {/* Category */}
+
+      <div className="mb-8">
+
+
+        <h3 className="mb-4 font-bold text-gray-800">
+
+          Category
+
+        </h3>
+
+
+        <div className="space-y-3">
+
+
+          {categories.map((item) => (
+
+
+            <label
+
+              key={item}
+
+              className="flex cursor-pointer items-center gap-3 text-gray-700"
+
+            >
+
+
+              <input
+
+                type="radio"
+
+                checked={
+                  category === item
+                }
+
+                onChange={() =>
+                  setCategory(item)
+                }
+
+                className="accent-orange-500"
+
+              />
+
+
+              {item}
+
+
+            </label>
+
+
+          ))}
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+
+
+      {/* Brand */}
+
+      <div>
+
+
+        <h3 className="mb-4 font-bold text-gray-800">
+
+          Brand
+
+        </h3>
+
+
+        <div className="space-y-3">
+
+
+          {brands.map((item) => (
+
+
+            <label
+
+              key={item}
+
+              className="flex cursor-pointer items-center gap-3 text-gray-700"
+
+            >
+
+
+              <input
+
+                type="radio"
+
+                checked={
+                  brand === item
+                }
+
+                onChange={() =>
+                  setBrand(item)
+                }
+
+                className="accent-orange-500"
+
+              />
+
+
+              {item}
+
+
+            </label>
+
+
+          ))}
+
+
+        </div>
+
+
+      </div>
+
+
+    </>
+
+  );
+
+
+
+
+
+
+
 
 
   return (
@@ -158,12 +328,80 @@ export default function ProductsPage() {
       <div className="mx-auto max-w-7xl px-6">
 
 
-
-        <h1 className="mb-8 text-4xl font-extrabold text-gray-900">
+        <h1 className="mb-8 text-4xl font-extrabold">
 
           Products
 
         </h1>
+
+
+
+
+
+
+        {/* Mobile Controls */}
+
+        <div className="mb-6 flex items-center justify-between lg:hidden">
+
+
+          <button
+
+            onClick={() =>
+              setFilterOpen(true)
+            }
+
+            className="flex items-center gap-2 rounded-xl bg-white px-4 py-3 font-semibold shadow"
+
+          >
+
+
+            <SlidersHorizontal size={18} />
+
+            Filters
+
+
+          </button>
+
+
+
+
+
+          <select
+
+            value={sort}
+
+            onChange={(e) =>
+              setSort(e.target.value)
+            }
+
+            className="rounded-xl border bg-white px-4 py-3"
+
+          >
+
+
+            <option value="">
+              Sort
+            </option>
+
+
+            <option value="low">
+              Low to High
+            </option>
+
+
+            <option value="high">
+              High to Low
+            </option>
+
+
+          </select>
+
+
+        </div>
+
+
+
+
 
 
 
@@ -176,88 +414,61 @@ export default function ProductsPage() {
 
 
 
-          {/* Filter Sidebar */}
+          {/* Desktop Filter */}
+
+          <aside className="hidden rounded-2xl bg-white p-6 shadow lg:block">
 
 
-          <aside className="rounded-2xl bg-white p-6 shadow">
+            <FilterContent />
 
 
-            <div className="mb-6 flex items-center justify-between">
+            {/* Deal Zone */}
+
+            <div className="mt-8 overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-lg">
 
 
-              <h2 className="text-xl font-bold text-gray-900">
+              <div className="bg-orange-500 px-5 py-4">
 
-                Filters
+                <h3 className="text-lg font-extrabold text-white">
 
-              </h2>
+                  🔥 Deal Zone
 
+                </h3>
 
-              <button
-
-                onClick={clearFilters}
-
-                className="text-sm font-semibold text-orange-500"
-
-              >
-
-                Clear
-
-              </button>
+              </div>
 
 
-            </div>
 
-                        {/* Category */}
-
-            <div className="mb-8">
+              <div className="p-5">
 
 
-              <h3 className="mb-4 font-bold text-gray-800">
+                <p className="text-sm text-gray-600">
 
-                Category
+                  Limited time offers
 
-              </h3>
-
-
-              <div className="space-y-3">
+                </p>
 
 
-                {categories.map((item) => (
+                <h2 className="mt-4 text-4xl font-extrabold text-orange-500">
+
+                  50% OFF
+
+                </h2>
 
 
-                  <label
+                <p className="mt-2 text-xs text-gray-500">
 
-                    key={item}
+                  On top selling products
 
-                    className="flex cursor-pointer items-center gap-3 text-gray-700"
-
-                  >
+                </p>
 
 
-                    <input
 
-                      type="radio"
+                <button className="mt-6 w-full rounded-xl bg-orange-500 py-3 font-bold text-white">
 
-                      checked={
-                        category === item
-                      }
+                  View Deals
 
-                      onChange={() =>
-                        setCategory(item)
-                      }
-
-                      className="accent-orange-500"
-
-                    />
-
-
-                    {item}
-
-
-                  </label>
-
-
-                ))}
+                </button>
 
 
               </div>
@@ -267,134 +478,6 @@ export default function ProductsPage() {
 
 
 
-
-
-
-
-
-
-            {/* Brand */}
-
-            <div>
-
-
-              <h3 className="mb-4 font-bold text-gray-800">
-
-                Brand
-
-              </h3>
-
-
-              <div className="space-y-3">
-
-
-                {brands.map((item) => (
-
-
-                  <label
-
-                    key={item}
-
-                    className="flex cursor-pointer items-center gap-3 text-gray-700"
-
-                  >
-
-
-                    <input
-
-                      type="radio"
-
-                      checked={
-                        brand === item
-                      }
-
-                      onChange={() =>
-                        setBrand(item)
-                      }
-
-                      className="accent-orange-500"
-
-                    />
-
-
-                    {item}
-
-
-                  </label>
-
-
-                ))}
-
-
-              </div>
-
-
-            </div>
-
-<div className="mt-6 overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-md">
-
-
-  <div className="bg-orange-500 px-4 py-3">
-
-
-    <h3 className="text-base font-extrabold text-white">
-
-      🔥 Deal Zone
-
-    </h3>
-
-
-  </div>
-
-
-
-
-
-  <div className="p-4">
-
-
-    <p className="text-sm font-medium text-gray-600">
-
-      Limited time offers
-
-    </p>
-
-
-
-
-    <h2 className="mt-3 text-3xl font-black text-orange-500">
-
-      50% OFF
-
-    </h2>
-
-
-
-
-    <p className="mt-1 text-xs text-gray-500">
-
-      On top selling products
-
-    </p>
-
-
-
-
-
-    <button className="mt-5 w-full rounded-lg bg-orange-500 py-2 text-sm font-bold text-white transition hover:bg-orange-600">
-
-
-      View Deals
-
-
-    </button>
-
-
-
-  </div>
-
-
-</div>
           </aside>
 
 
@@ -405,20 +488,18 @@ export default function ProductsPage() {
 
 
 
-          {/* Products Area */}
+
+          {/* Products */}
 
           <section className="lg:col-span-3">
 
 
-
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 hidden items-center justify-between lg:flex">
 
 
               <p className="text-gray-600">
 
-
                 Showing {filteredProducts.length} products
-
 
               </p>
 
@@ -434,29 +515,23 @@ export default function ProductsPage() {
                   setSort(e.target.value)
                 }
 
-                className="rounded-xl border bg-white px-5 py-3 outline-none"
+                className="rounded-xl border bg-white px-5 py-3"
 
               >
 
 
                 <option value="">
-
                   Sort Products
-
                 </option>
 
 
                 <option value="low">
-
-                  Price: Low to High
-
+                  Price Low to High
                 </option>
 
 
                 <option value="high">
-
-                  Price: High to Low
-
+                  Price High to Low
                 </option>
 
 
@@ -471,42 +546,83 @@ export default function ProductsPage() {
 
 
 
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
 
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredProducts.map((product) => (
 
 
-              {filteredProducts.map(
-                (product) => (
+                <ProductCard
+
+                  key={product.id}
+
+                  product={product}
+
+                />
 
 
-                  <ProductCard
-
-                    key={product.id}
-
-                    product={product}
-
-                  />
-
-
-                )
-              )}
+              ))}
 
 
             </div>
 
 
-
           </section>
-
-
 
 
         </div>
 
 
-
       </div>
+
+
+
+
+
+
+
+
+
+
+      {/* Mobile Filter Drawer */}
+
+      {filterOpen && (
+
+
+        <div className="fixed inset-0 z-50 bg-black/40 lg:hidden">
+
+
+          <div className="h-full w-80 bg-white p-6 shadow-xl">
+
+
+            <button
+
+              onClick={() =>
+                setFilterOpen(false)
+              }
+
+              className="mb-6"
+
+            >
+
+
+              <X />
+
+
+            </button>
+
+
+
+            <FilterContent />
+
+
+          </div>
+
+
+        </div>
+
+
+      )}
 
 
     </main>
