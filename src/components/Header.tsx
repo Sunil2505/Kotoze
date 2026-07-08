@@ -227,15 +227,51 @@ export default function Header() {
 
 
 
-        {/* Search */}
+{/* Search */}
 
-        <div className="relative hidden flex-1 md:block">
-
-
-          <div className="relative rounded-full border border-gray-300 bg-white shadow-sm">
+<div className="relative hidden flex-1 md:block">
 
 
-          </div>
+  <div className="relative rounded-full border border-gray-300 bg-white shadow-sm">
+
+
+    <Search
+
+      size={20}
+
+      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+
+    />
+
+
+    <input
+
+      type="text"
+
+      value={search}
+
+      onFocus={() =>
+        setSearchOpen(true)
+      }
+
+      onChange={(e) => {
+
+        setSearch(e.target.value);
+
+        setSelectedIndex(-1);
+
+      }}
+
+      onKeyDown={handleKeyDown}
+
+      placeholder="Search products..."
+
+      className="w-full rounded-full bg-transparent py-3 pl-12 pr-5 text-gray-900 placeholder:text-gray-400 outline-none"
+
+    />
+
+
+  </div>
 
 
 

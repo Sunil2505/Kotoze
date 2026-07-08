@@ -28,34 +28,16 @@ export default function ProductCard({
 
   return (
 
-    <div className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <div className="group relative bg-white p-2 transition">
 
 
+      {/* Wishlist */}
 
-      {/* Offer Bar */}
+      <button className="absolute right-2 top-2 z-10 rounded-full bg-white p-2 shadow hover:text-red-500">
 
-      <div className="flex items-center justify-between bg-orange-500 px-3 py-2">
+        <Heart size={16} />
 
-
-        <span className="rounded-full bg-red-500 px-2.5 py-1 text-[11px] font-bold text-white">
-
-          {product.discount}
-
-        </span>
-
-
-        <button className="rounded-full bg-white p-1.5 text-gray-700 hover:text-red-500">
-
-          <Heart size={15} />
-
-        </button>
-
-
-      </div>
-
-
-
-
+      </button>
 
 
 
@@ -66,9 +48,7 @@ export default function ProductCard({
 
         {/* Image */}
 
-
-        <div className="flex h-28 items-center justify-center bg-white p-2 sm:h-40">
-
+        <div className="flex h-32 items-center justify-center">
 
           <Image
 
@@ -76,14 +56,36 @@ export default function ProductCard({
 
             alt={product.name}
 
-            width={160}
+            width={150}
 
-            height={160}
+            height={150}
 
-            className="h-20 w-auto object-contain transition duration-300 group-hover:scale-110 sm:h-32"
+            className="h-28 w-auto object-contain transition group-hover:scale-105"
 
           />
 
+        </div>
+
+
+
+
+
+        {/* Discount */}
+
+        <div className="mt-2 flex items-center gap-2">
+
+          <span className="rounded bg-red-600 px-2 py-1 text-xs font-bold text-white">
+
+            {product.discount}
+
+          </span>
+
+
+          <span className="text-xs font-bold text-red-600">
+
+            Deal
+
+          </span>
 
         </div>
 
@@ -91,91 +93,95 @@ export default function ProductCard({
 
 
 
+        {/* Brand */}
 
+        <p className="mt-2 text-xs text-gray-500">
 
+          {product.brand}
 
-        {/* Details */}
-
-        <div className="p-3">
-
-
-          <h3 className="line-clamp-2 text-sm font-bold text-gray-900 sm:text-base">
-
-            {product.name}
-
-          </h3>
+        </p>
 
 
 
 
 
+        {/* Name */}
 
+        <h3 className="line-clamp-2 text-sm font-medium text-gray-900">
 
-          {/* Rating */}
+          {product.name}
 
-          <div className="mt-2 flex items-center gap-0.5">
-
-
-            {[...Array(product.rating)].map(
-              (_, index) => (
-
-                <Star
-
-                  key={index}
-
-                  size={13}
-
-                  className="fill-yellow-400 text-yellow-400"
-
-                />
-
-              )
-            )}
-
-
-
-            <span className="ml-1 text-[11px] text-gray-500">
-
-              ({product.reviews})
-
-            </span>
-
-
-          </div>
+        </h3>
 
 
 
 
 
+        {/* Rating */}
+
+        <div className="mt-2 flex items-center gap-1">
+
+          {[...Array(product.rating)].map(
+            (_, index) => (
+
+              <Star
+
+                key={index}
+
+                size={13}
+
+                className="fill-yellow-400 text-yellow-400"
+
+              />
+
+            )
+          )}
 
 
+          <span className="ml-1 text-xs text-gray-500">
 
+            ({product.reviews})
 
-          {/* Price */}
-
-          <div className="mt-2 flex flex-wrap items-center gap-1">
-
-
-            <span className="text-lg font-extrabold text-orange-500 sm:text-xl">
-
-              ₹{product.price.toLocaleString("en-IN")}
-
-            </span>
-
-
-
-            <span className="text-xs text-gray-400 line-through">
-
-              ₹{product.oldPrice.toLocaleString("en-IN")}
-
-            </span>
-
-
-          </div>
-
+          </span>
 
 
         </div>
+
+
+
+
+
+        {/* Price */}
+
+        <div className="mt-2">
+
+
+          <span className="text-lg font-bold">
+
+            ₹{product.price.toLocaleString("en-IN")}
+
+          </span>
+
+
+          <span className="ml-2 text-xs text-gray-400 line-through">
+
+            ₹{product.oldPrice.toLocaleString("en-IN")}
+
+          </span>
+
+
+        </div>
+
+
+
+
+
+        <p className="mt-1 text-xs text-green-600">
+
+          FREE Delivery
+
+        </p>
+
 
 
       </Link>
@@ -184,53 +190,37 @@ export default function ProductCard({
 
 
 
+      {/* Cart */}
 
+      <button
 
+        onClick={() =>
 
+          addToCart({
 
+            id: product.id,
 
-      {/* Button */}
+            name: product.name,
 
-      <div className="px-3 pb-3">
+            price: product.price,
 
+            image: product.image,
 
-        <button
+            quantity: 1,
 
-          onClick={() =>
+          })
 
-            addToCart({
+        }
 
-              id: product.id,
+        className="mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-orange-500 py-2 text-sm font-bold text-white hover:bg-orange-600"
 
-              name: product.name,
+      >
 
-              price: product.price,
+        <ShoppingCart size={16} />
 
-              image: product.image,
+        Add to Cart
 
-              quantity: 1,
-
-            })
-
-          }
-
-
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 py-2 text-xs font-bold text-white hover:bg-orange-600 sm:text-sm"
-
-        >
-
-
-          <ShoppingCart size={16} />
-
-
-          Add to Cart
-
-
-        </button>
-
-
-      </div>
-
+      </button>
 
 
     </div>

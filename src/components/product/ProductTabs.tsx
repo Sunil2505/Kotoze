@@ -6,7 +6,7 @@ export default function ProductTabs() {
   const [activeTab, setActiveTab] = useState("description");
 
   return (
-    <section className="mt-16">
+    <section className="mt-0.5">
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200">

@@ -102,33 +102,40 @@ export default function FeaturedProducts() {
 
 
   const filteredProducts =
-    products.filter((product) => {
+  products.filter((product) => {
 
 
-      const keyword =
-        search.toLowerCase();
+    if (search.trim() === "") {
+
+      return product.featured;
+
+    }
 
 
-      return (
-
-        product.name
-          .toLowerCase()
-          .includes(keyword) ||
+    const keyword =
+      search.toLowerCase();
 
 
-        product.brand
-          .toLowerCase()
-          .includes(keyword) ||
+    return (
+
+      product.name
+        .toLowerCase()
+        .includes(keyword) ||
 
 
-        product.category
-          .toLowerCase()
-          .includes(keyword)
+      product.brand
+        .toLowerCase()
+        .includes(keyword) ||
 
-      );
 
-    });
+      product.category
+        .toLowerCase()
+        .includes(keyword)
 
+    );
+
+
+  });
 
 
 
@@ -261,7 +268,7 @@ const scroll = (
 
               onScroll={checkScroll}
 
-             className="flex gap-6 overflow-hidden scroll-smooth px-0 pb-4"
+             className="flex gap-0 overflow-hidden scroll-smooth px-0 pb-4"
 
             >
 
@@ -273,7 +280,7 @@ const scroll = (
 
                   key={product.id}
 
-                  className="basis-[calc((100%-72px)/4)] shrink-0"
+                  className="w-[185px] shrink-0"
 
                 >
 

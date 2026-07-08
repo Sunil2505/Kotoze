@@ -33,7 +33,6 @@ export default function FlashSale() {
 
 
 
-
   const flashSaleProducts =
     products.filter(
       (product) => product.flashSale
@@ -41,17 +40,11 @@ export default function FlashSale() {
 
 
 
-
-
   const checkScroll = () => {
 
-
-    const el =
-      scrollRef.current;
-
+    const el = scrollRef.current;
 
     if (!el) return;
-
 
 
     setCanLeft(
@@ -59,18 +52,12 @@ export default function FlashSale() {
     );
 
 
-
     setCanRight(
-
       el.scrollLeft + el.clientWidth <
-        el.scrollWidth - 5
-
+      el.scrollWidth - 5
     );
 
-
   };
-
-
 
 
 
@@ -83,40 +70,29 @@ export default function FlashSale() {
 
 
 
-
-
   const scroll = (
     direction: "left" | "right"
   ) => {
 
 
-    const el =
-      scrollRef.current;
-
+    const el = scrollRef.current;
 
     if (!el) return;
-
 
 
     el.scrollBy({
 
       left:
         direction === "left"
-          ? -el.clientWidth
-          : el.clientWidth,
-
+          ? -400
+          : 400,
 
       behavior: "smooth",
 
     });
 
 
-
-    setTimeout(
-      checkScroll,
-      400
-    );
-
+    setTimeout(checkScroll, 300);
 
   };
 
@@ -124,42 +100,36 @@ export default function FlashSale() {
 
 
 
-
-
-
   return (
 
-    <section className="bg-orange-50 py-8">
+    <section className="bg-orange-50 py-6">
 
 
       <div className="mx-auto max-w-7xl px-6">
 
 
 
-
+        {/* Header */}
 
         <div className="mb-8 flex items-center justify-between">
 
 
           <div>
 
-
-            <h2 className="text-3xl font-extrabold text-orange-500">
+            <h2 className="text-4xl font-extrabold text-orange-500">
 
               🔥 Flash Sale
 
             </h2>
 
 
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-gray-600">
 
               Limited time deals. Grab them before they're gone!
 
             </p>
 
-
           </div>
-
 
 
           <Countdown />
@@ -172,28 +142,19 @@ export default function FlashSale() {
 
 
 
-
-
-
-
         <div className="relative">
 
 
 
-
-
-
-          {/* Left */}
+          {/* Left Arrow */}
 
           {canLeft && (
 
             <button
 
-              onClick={() =>
-                scroll("left")
-              }
+              onClick={() => scroll("left")}
 
-              className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+              className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-4 shadow-xl"
 
             >
 
@@ -209,70 +170,51 @@ export default function FlashSale() {
 
 
 
-
-
-
           {/* Products */}
 
-          <div
+{/* Products */}
 
-            ref={scrollRef}
+<div
 
-            onScroll={checkScroll}
+  ref={scrollRef}
 
-            className="flex gap-6 overflow-hidden scroll-smooth pb-4"
+  onScroll={checkScroll}
 
-          >
+  className="flex gap-0 overflow-hidden scroll-smooth pb-4"
 
+>
 
-            {flashSaleProducts.map(
-              (product) => (
+  {flashSaleProducts.map((product) => (
 
+    <div
 
-                <div
+      key={product.id}
 
-                  key={product.id}
+      className="w-[185px] shrink-0"
 
-                  className="basis-[calc((100%-72px)/4)] shrink-0"
+    >
 
-                >
+      <ProductCard product={product} />
 
+    </div>
 
-                  <ProductCard
+  ))}
 
-                    product={product}
-
-                  />
-
-
-                </div>
-
-
-              )
-            )}
-
-
-          </div>
+</div>
 
 
 
 
 
-
-
-
-
-          {/* Right */}
+          {/* Right Arrow */}
 
           {canRight && (
 
             <button
 
-              onClick={() =>
-                scroll("right")
-              }
+              onClick={() => scroll("right")}
 
-              className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-lg hover:bg-orange-500 hover:text-white"
+              className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-4 shadow-xl"
 
             >
 
@@ -283,10 +225,6 @@ export default function FlashSale() {
           )}
 
 
-
-
-
-
         </div>
 
 
@@ -294,23 +232,17 @@ export default function FlashSale() {
 
 
 
+        <div className="mt-4 text-center">
 
 
-
-        <div className="mt-6 text-center">
-
-
-          <button className="rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white hover:bg-orange-600">
-
+          <button className="rounded-xl bg-orange-500 px-8 py-3 font-bold text-white hover:bg-orange-600">
 
             View All Deals
-
 
           </button>
 
 
         </div>
-
 
 
 
