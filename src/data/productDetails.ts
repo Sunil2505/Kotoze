@@ -36,7 +36,8 @@ export const productDetails = {
     ],
 
     description:
-      "Smart watch with fitness tracking, health monitoring, notifications and premium display.",
+
+  "Smart watch with advanced fitness tracking, real-time health monitoring, heart rate tracking, multiple sports modes, instant notifications, premium AMOLED display, long battery life and water-resistant design for everyday use.",
 
     features: [
       "AMOLED Display",

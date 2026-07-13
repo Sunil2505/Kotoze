@@ -39,10 +39,10 @@ export default function ReviewSection({
 
   return (
 
-    <div className="mt-10 rounded-2xl bg-white p-6 shadow-lg">
+    <div className="mt-0 bg-white p-0">
 
 
-      <h2 className="mb-5 text-2xl font-bold text-gray-900">
+      <h2 className="mb-0 text-lg font-bold text-gray-900">
 
         Customer Reviews
 
@@ -53,7 +53,7 @@ export default function ReviewSection({
 
       {/* Stars */}
 
-      <div className="mb-4 flex gap-2">
+      <div className="1">
 
 
         {[1, 2, 3, 4, 5].map((star) => (
@@ -71,7 +71,7 @@ export default function ReviewSection({
 
             <Star
 
-              size={28}
+              size={18}
 
               className={
                 star <= rating
@@ -96,67 +96,67 @@ export default function ReviewSection({
 
 
 
-      <textarea
+<div className="flex flex-col items-start">
 
-        value={comment}
+  <textarea
 
-        onChange={(e) =>
-          setComment(e.target.value)
-        }
+    value={comment}
 
-        placeholder="Write your review..."
+    onChange={(e) =>
+      setComment(e.target.value)
+    }
 
-        className="w-full rounded-xl border p-4 text-gray-900"
+    placeholder="Write your review..."
 
-      />
+    className="h-[90px] w-[31%] rounded-lg border p-2 text-sm text-gray-900"
 
-
-
-
+  />
 
 
-      <button
 
-        onClick={() => {
+  <button
 
-
-          if (!comment) return;
+    onClick={() => {
 
 
-          addReview({
-
-            id: Date.now(),
-
-            productId,
-
-            user:
-              user?.name || "Guest",
-
-            rating,
-
-            comment,
-
-            date:
-              new Date()
-                .toLocaleDateString(),
-
-          });
+      if (!comment) return;
 
 
-          setComment("");
+      addReview({
+
+        id: Date.now(),
+
+        productId,
+
+        user:
+          user?.name || "Guest",
+
+        rating,
+
+        comment,
+
+        date:
+          new Date()
+            .toLocaleDateString(),
+
+      });
 
 
-        }}
+      setComment("");
+
+    }}
 
 
-        className="mt-4 rounded-xl bg-orange-500 px-6 py-3 font-bold text-white hover:bg-orange-600"
+    className="mt-2 rounded-lg bg-orange-500 px-5 py-2 text-sm font-bold text-white hover:bg-orange-600"
 
-      >
+  >
 
-        Submit Review
+    Submit Review
 
-      </button>
+  </button>
 
+
+</div>
 
 
 

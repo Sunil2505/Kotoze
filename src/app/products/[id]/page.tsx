@@ -28,15 +28,11 @@ export default function ProductDetails({
   params: Promise<{ id: string }>;
 }) {
 
-
   const { id } = use(params);
-
 
   const router = useRouter();
 
-
   const { addToCart } = useCart();
-
 
   const { toggleWishlist } = useWishlist();
 
@@ -44,10 +40,8 @@ export default function ProductDetails({
   const [quantity, setQuantity] =
     useState(1);
 
-
   const [selectedImage, setSelectedImage] =
     useState("");
-
 
 
   const product =
@@ -65,8 +59,6 @@ export default function ProductDetails({
       : null;
 
 
-
-
   useEffect(() => {
 
     window.scrollTo({
@@ -77,20 +69,13 @@ export default function ProductDetails({
   }, []);
 
 
-
-
   useEffect(() => {
 
     if (product) {
-
       setSelectedImage(product.image);
-
     }
 
   }, [product]);
-
-
-
 
 
   if (!product) {
@@ -100,9 +85,7 @@ export default function ProductDetails({
       <main className="py-20">
 
         <h1 className="text-center text-3xl font-bold">
-
           Product Not Found
-
         </h1>
 
       </main>
@@ -112,13 +95,9 @@ export default function ProductDetails({
   }
 
 
-
-
-
-
   return (
 
-    <main className="mx-auto max-w-full overflow-hidden px-8 pt-1 pb-4">
+    <main className="mx-auto max-w-full px-8 py-2">
 
 
       {/* BACK */}
@@ -127,7 +106,7 @@ export default function ProductDetails({
 
         onClick={() => router.back()}
 
-        className="mb-0 flex items-center gap-2 hover:text-orange-500"
+        className="mb-2 flex items-center gap-2 hover:text-orange-500"
 
       >
 
@@ -139,17 +118,14 @@ export default function ProductDetails({
 
 
 
+      {/* PRODUCT GRID */}
+
+      <div className="grid items-start gap-5 lg:grid-cols-[40%_35%_22%]">
 
 
+        {/* LEFT GALLERY */}
 
-      <div className="grid -mt-4 items-start gap-5 lg:grid-cols-[40%_35%_22%]">
-
-
-
-        {/* LEFT IMAGE */}
-
-        <div className="sticky top-28 flex h-[430px] bg-white">
-
+        <div className="flex h-[360px] bg-white">
 
 
           {/* THUMBNAILS */}
@@ -159,7 +135,6 @@ export default function ProductDetails({
 
             {details?.gallery.map((img) => (
 
-
               <button
 
                 key={img}
@@ -168,16 +143,14 @@ export default function ProductDetails({
                   setSelectedImage(img)
                 }
 
-
-                className={`flex h-16 w-16 items-center justify-center rounded-lg border-2 bg-white p-1 transition
+                className={`flex h-16 w-16 items-center justify-center rounded-lg border-2 bg-white p-1
                 ${
                   selectedImage === img
                     ? "border-orange-500"
-                    : "border-gray-300 hover:border-orange-500"
+                    : "border-gray-300"
                 }`}
 
               >
-
 
                 <Image
 
@@ -193,60 +166,48 @@ export default function ProductDetails({
 
                 />
 
-
               </button>
-
 
             ))}
 
-
           </div>
 
 
+{/* MAIN IMAGE */}
 
+<div className="group flex flex-1 items-center justify-center overflow-hidden">
 
+  <Image
 
-          {/* MAIN IMAGE */}
+    src={selectedImage || product.image}
 
-          <div className="group flex flex-1 items-center justify-center overflow-hidden">
+    alt={product.name}
 
+    width={420}
 
-            <Image
+    height={420}
 
-              src={selectedImage || product.image}
+    className="max-h-[330px] w-auto object-contain transition-transform duration-500 group-hover:scale-125"
 
-              alt={product.name}
+  />
 
-              width={450}
-
-              height={450}
-
-              className="max-h-[390px] w-auto object-contain transition-transform duration-500 group-hover:scale-110"
-
-            />
-
-
-          </div>
-
+</div>
 
         </div>
                 {/* MIDDLE DETAILS */}
 
         <div>
 
-
-          <h1 className="text-3xl font-medium leading-tight text-gray-900">
+          <h1 className="text-3xl font-medium text-gray-900">
 
             {product.name}
 
           </h1>
 
 
-
           {/* Rating */}
 
           <div className="mt-1 flex items-center gap-1">
-
 
             {[...Array(product.rating)].map(
               (_, index) => (
@@ -265,18 +226,13 @@ export default function ProductDetails({
             )}
 
 
-
             <span className="text-sm text-blue-600">
 
               ({product.reviews} Reviews)
 
             </span>
 
-
           </div>
-
-
-
 
 
 
@@ -284,9 +240,7 @@ export default function ProductDetails({
 
           <div className="mt-2">
 
-
             <div className="flex items-center gap-3">
-
 
               <span className="text-3xl font-medium">
 
@@ -295,17 +249,13 @@ export default function ProductDetails({
               </span>
 
 
-
               <span className="text-gray-500 line-through">
 
                 ₹{product.oldPrice.toLocaleString("en-IN")}
 
               </span>
 
-
             </div>
-
-
 
 
             <p className="text-red-500">
@@ -314,11 +264,7 @@ export default function ProductDetails({
 
             </p>
 
-
           </div>
-
-
-
 
 
 
@@ -328,7 +274,6 @@ export default function ProductDetails({
 
             <div className="mt-3">
 
-
               <h2 className="font-bold">
 
                 About this item
@@ -336,9 +281,7 @@ export default function ProductDetails({
               </h2>
 
 
-
               <ul className="list-disc pl-5 text-sm leading-5">
-
 
                 {details.features.map((item) => (
 
@@ -350,9 +293,7 @@ export default function ProductDetails({
 
                 ))}
 
-
               </ul>
-
 
             </div>
 
@@ -361,12 +302,9 @@ export default function ProductDetails({
 
 
 
-
-
           {/* Offers */}
 
           <div className="mt-3">
-
 
             <h3 className="mb-2 font-bold">
 
@@ -375,9 +313,7 @@ export default function ProductDetails({
             </h3>
 
 
-
             <div className="grid grid-cols-3 gap-3">
-
 
               <div className="rounded-xl border p-3 text-sm">
 
@@ -386,7 +322,6 @@ export default function ProductDetails({
                 <p>10% Discount</p>
 
               </div>
-
 
 
               <div className="rounded-xl border p-3 text-sm">
@@ -398,7 +333,6 @@ export default function ProductDetails({
               </div>
 
 
-
               <div className="rounded-xl border p-3 text-sm">
 
                 <b>No Cost EMI</b>
@@ -407,14 +341,9 @@ export default function ProductDetails({
 
               </div>
 
-
             </div>
 
-
           </div>
-
-
-
 
 
 
@@ -435,9 +364,6 @@ export default function ProductDetails({
 
 
 
-
-
-
         {/* RIGHT BUY BOX */}
 
         <div className="sticky top-28 rounded-xl border bg-white p-4">
@@ -450,13 +376,11 @@ export default function ProductDetails({
           </p>
 
 
-
           <p className="mt-2 text-sm">
 
             🚚 FREE Delivery within 2 - 4 days
 
           </p>
-
 
 
           <p className="font-bold text-green-700">
@@ -467,20 +391,15 @@ export default function ProductDetails({
 
 
 
-
-
-
           {/* Quantity */}
 
           <div className="my-3 flex items-center gap-3">
 
-
-            <span className="text-sm font-semibold">
+            <span className="font-semibold text-sm">
 
               Quantity:
 
             </span>
-
 
 
             <button
@@ -498,9 +417,7 @@ export default function ProductDetails({
             </button>
 
 
-
             <b>{quantity}</b>
-
 
 
             <button
@@ -517,8 +434,6 @@ export default function ProductDetails({
 
 
           </div>
-
-
 
 
 
@@ -541,7 +456,7 @@ export default function ProductDetails({
               })
             }
 
-            className="mb-2 flex w-full justify-center gap-2 rounded-full bg-yellow-400 py-2 font-bold"
+            className="mb-2 flex w-full items-center justify-center gap-2 rounded-full bg-yellow-400 py-2 font-bold"
 
           >
 
@@ -553,16 +468,15 @@ export default function ProductDetails({
 
 
 
+          <button
 
+            className="mb-2 w-full rounded-full bg-orange-500 py-2 font-bold text-white"
 
-
-          <button className="mb-2 w-full rounded-full bg-orange-500 py-2 font-bold text-white">
+          >
 
             Buy Now
 
           </button>
-
-
 
 
 
@@ -583,7 +497,7 @@ export default function ProductDetails({
               })
             }
 
-            className="flex w-full justify-center gap-2 rounded-full border py-2"
+            className="flex w-full items-center justify-center gap-2 rounded-full border py-2"
 
           >
 
@@ -601,23 +515,25 @@ export default function ProductDetails({
 
 
 
+      {/* PRODUCT TABS */}
 
+      <div className="mt-4">
 
+<ProductTabs
 
+  description={details?.description}
 
-      <div className="mt-6">
+  specifications={details?.specifications}
 
-        <ProductTabs />
+  productId={product.id}
+
+/>
 
       </div>
 
 
 
-      <ReviewSection productId={product.id} />
-
-
-      <RelatedProducts />
-
+         <RelatedProducts />
 
 
     </main>

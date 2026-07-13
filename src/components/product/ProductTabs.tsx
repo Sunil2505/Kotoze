@@ -1,187 +1,163 @@
 "use client";
 
 import { useState } from "react";
+import ReviewSection from "@/components/ReviewSection";
 
-export default function ProductTabs() {
-  const [activeTab, setActiveTab] = useState("description");
+
+type Props = {
+  description?: string;
+  specifications?: Record<string, string>;
+  productId: number;
+};
+
+export default function ProductTabs({
+
+  description,
+
+  specifications,
+
+  productId,
+
+}: Props) {
+
+
+  const [activeTab, setActiveTab] =
+    useState("description");
+
 
   return (
-    <section className="mt-0.5">
+
+    <section className="mt-0">
+
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+
+            <div className="flex gap-6 border-b border-gray-200 pl-0">
+
 
         {[
           { id: "description", label: "Description" },
           { id: "specifications", label: "Specifications" },
-          { id: "reviews", label: "Reviews (124)" },
+          { id: "reviews", label: "Reviews" },
         ].map((tab) => (
 
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+<button
 
-            className={`border-b-2 px-6 py-4 font-semibold transition ${
-              activeTab === tab.id
-                ? "border-orange-500 text-orange-500"
-                : "border-transparent text-gray-500 hover:text-orange-500"
-            }`}
-          >
+  key={tab.id}
 
+  onClick={() =>
+    setActiveTab(tab.id)
+  }
+
+  className={`px-4 py-3 text-sm font-semibold transition
+  border-0 border-b-2 rounded-none bg-transparent
+  outline-none focus:outline-none focus:ring-0
+  ${
+    activeTab === tab.id
+      ? "border-b-orange-500 text-orange-500"
+      : "border-b-transparent text-gray-500 hover:text-orange-500"
+  }`}
+
+>
             {tab.label}
 
           </button>
 
         ))}
 
+
       </div>
 
 
 
-      {/* Description */}
 
-      {activeTab === "description" && (
 
-        <div className="rounded-b-xl bg-white p-8 shadow-md">
+{/* Description */}
 
-          <h3 className="mb-4 text-2xl font-bold text-gray-900">
+{activeTab === "description" && (
 
-            Product Description
+  <div className="bg-white pt-5 pl-7">
 
-          </h3>
+    <h3 className="mb-3 text-sm font-bold">
+      Product Description
+    </h3>
 
+    <p className="max-w-md text-justify text-sm leading-6 text-gray-700">
 
-          <p className="leading-8 text-gray-700">
+      {description}
 
-            Experience premium sound quality with advanced Active Noise
-            Cancellation, crystal-clear audio, Bluetooth 5.3 connectivity,
-            and up to 30 hours of battery life.
+    </p>
 
-            Designed for comfort, these wireless headphones are perfect
-            for work, travel, gaming, and entertainment.
+  </div>
 
-          </p>
+)}
 
 
-        </div>
 
-      )}
 
 
+{/* Specifications */}
 
+{activeTab === "specifications" && (
 
-      {/* Specifications */}
+  <div className="bg-white pt-5 pl-7">
 
-      {activeTab === "specifications" && (
+    <table className="w-[260px] text-sm">
 
-        <div className="rounded-b-xl bg-white p-8 shadow-md">
+      <tbody>
 
-          <table className="w-full">
+        {Object.entries(
+          specifications || {}
+        ).map(([key, value]) => (
 
-            <tbody>
+          <tr
+            key={key}
+            className="border-b border-gray-200"
+          >
 
-              {[
-                ["Brand", "Sony"],
-                ["Model", "WH-1000XM5"],
-                ["Bluetooth", "5.3"],
-                ["Battery", "30 Hours"],
-                ["Charging", "USB-C Fast Charging"],
-                ["Warranty", "1 Year"],
-                ["Weight", "250 g"],
-              ].map(([key, value]) => (
+            <td className="w-[120px] py-2 font-semibold text-gray-600">
 
-                <tr
-                  key={key}
-                  className="border-b border-gray-200"
-                >
+              {key}
 
-                  <td className="py-4 font-semibold text-gray-600">
+            </td>
 
-                    {key}
 
-                  </td>
+            <td className="py-2 pl-10 text-gray-900">
 
+              {value}
 
-                  <td className="py-4 text-right text-gray-900">
+            </td>
 
-                    {value}
+          </tr>
 
-                  </td>
+        ))}
 
+      </tbody>
 
-                </tr>
+    </table>
 
-              ))}
+  </div>
 
-            </tbody>
+)}
 
-          </table>
 
-        </div>
 
-      )}
 
 
 
+{/* Reviews */}
 
+{activeTab === "reviews" && (
 
+  <div className="bg-white pt-5 pl-7">
 
-      {/* Reviews */}
+    <ReviewSection productId={productId} />
 
-      {activeTab === "reviews" && (
+  </div>
 
-        <div className="space-y-6 rounded-b-xl bg-white p-8 shadow-md">
-
-
-          {[
-            {
-              name: "Rahul",
-              rating: "★★★★★",
-              review:
-                "Amazing sound quality and battery backup. Worth every rupee.",
-            },
-            {
-              name: "Anjali",
-              rating: "★★★★☆",
-              review:
-                "Very comfortable to wear and excellent noise cancellation.",
-            },
-          ].map((review, index) => (
-
-            <div
-              key={index}
-              className="rounded-xl border border-gray-200 bg-gray-50 p-5"
-            >
-
-              <h4 className="text-lg font-bold text-gray-900">
-
-                {review.name}
-
-              </h4>
-
-
-              <p className="mt-1 text-yellow-400">
-
-                {review.rating}
-
-              </p>
-
-
-              <p className="mt-3 text-gray-700">
-
-                {review.review}
-
-              </p>
-
-
-            </div>
-
-          ))}
-
-        </div>
-
-      )}
-
+)}
     </section>
+
   );
+
 }
