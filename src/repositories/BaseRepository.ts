@@ -8,26 +8,26 @@ import {
 export default class BaseRepository<T extends Document> {
   constructor(protected readonly model: Model<T>) {}
 
-  async create(data: Partial<T>): Promise<T> {
+  async create(data: Partial<T>) {
     return this.model.create(data);
   }
 
-  async findById(id: string): Promise<T | null> {
+  async findById(id: string) {
     return this.model.findById(id);
   }
 
-  async findOne(filter: FilterQuery<T>): Promise<T | null> {
+  async findOne(filter: FilterQuery<T>) {
     return this.model.findOne(filter);
   }
 
-  async find(filter: FilterQuery<T> = {}): Promise<T[]> {
+  async find(filter: FilterQuery<T> = {}) {
     return this.model.find(filter);
   }
 
   async update(
     id: string,
     data: UpdateQuery<T>
-  ): Promise<T | null> {
+  ) {
     return this.model.findByIdAndUpdate(
       id,
       data,
@@ -37,7 +37,7 @@ export default class BaseRepository<T extends Document> {
     );
   }
 
-  async softDelete(id: string): Promise<T | null> {
+  async softDelete(id: string) {
     return this.model.findByIdAndUpdate(
       id,
       {
