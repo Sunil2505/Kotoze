@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { SchemaOptions } from "mongoose";
 
 const BaseSchema = {
   isDeleted: {
@@ -15,7 +15,7 @@ const BaseSchema = {
 
 export const schemaOptions = {
   timestamps: true,
-  versionKey: false,
-};
+  versionKey: false as false,
+} satisfies SchemaOptions;
 
 export default BaseSchema;
