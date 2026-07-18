@@ -1,49 +1,43 @@
-import dns from "node:dns";
-
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
-
-console.log("DNS Servers:", dns.getServers());
-
-
-
+//import dns from "node:dns";
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+//dns.setServers(["1.1.1.1", "8.8.8.8"]);
+
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable");
 }
 
-let cached = (global as any).mongoose;
+const uri: string = MONGODB_URI;
 
-if (!cached) {
-  cached = (global as any).mongoose = {
-    conn: null,
-    promise: null,
-  };
+declare global {
+  // eslint-disable-next-line no-var
+  var mongooseCache:
+    | {
+        conn: typeof mongoose | null;
+        promise: Promise<typeof mongoose> | null;
+      }
+    | undefined;
 }
 
+const cached = global.mongooseCache ?? {
+  conn: null,
+  promise: null,
+};
+
+global.mongooseCache = cached;
+
 export async function connectDB() {
-  if (cached.conn) return cached.conn;
-
-console.log(
-  "URI:",
-  process.env.MONGODB_URI?.replace(/\/\/.*:.*@/, "//***:***@")
-);
-
-
+  if (cached.conn) {
+    return cached.conn;
+  }
 
   if (!cached.promise) {
-    cached.promise = mongoose
-      .connect(MONGODB_URI)
-      .then((mongoose) => {
-        console.log("✅ MongoDB Connected");
-        return mongoose;
-      })
-      .catch((err) => {
-        console.error("❌ MongoDB Error:", err);
-        throw err;
-      });
+    cached.promise = mongoose.connect(uri).then((mongooseInstance) => {
+  console.log("✅ MongoDB Connected");
+  return mongooseInstance;
+});
   }
 
   cached.conn = await cached.promise;

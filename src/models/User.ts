@@ -127,15 +127,10 @@ UserSchema.pre("save", function (next) {
   next();
 });
 
-UserSchema.index({ roleId: 1 });
-UserSchema.index({ vendorId: 1 });
-UserSchema.index({ mobile: 1 });
-UserSchema.index({ email: 1 });
-UserSchema.index({ status: 1 });
 UserSchema.index({ fullName: "text" });
 
 const User: Model<IUser> =
   mongoose.models.User ||
   mongoose.model<IUser>("User", UserSchema);
-
+  
 export default User;

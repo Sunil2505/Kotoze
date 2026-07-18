@@ -51,7 +51,6 @@ const RoleSchema = new Schema<IRole>(
 );
 
 // Indexes
-RoleSchema.index({ code: 1 });
 RoleSchema.index({ isActive: 1 });
 
 const Role: Model<IRole> =
