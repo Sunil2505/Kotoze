@@ -40,7 +40,7 @@ export default function LoginForm() {
 
           console.log("➡️ Redirecting to Dashboard...");
 
-          router.push("/dashboard");
+            window.location.href = "/dashboard";
 
 
       console.log(data);
