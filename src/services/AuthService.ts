@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 
 import UserRepository from "@/repositories/UserRepository";
-import JwtService from "./JwtService";
 import AppError from "@/core/errors/AppError";
+import { generateAccessToken } from "@/lib/auth/jwt";
 
 export default class AuthService {
   private userRepository = new UserRepository();
@@ -23,7 +23,7 @@ export default class AuthService {
       throw new AppError("Invalid credentials.", 401);
     }
 
-    const token = JwtService.generateAccessToken({
+   const token = await generateAccessToken({
       userId: user._id.toString(),
       roleId: user.roleId.toString(),
     });

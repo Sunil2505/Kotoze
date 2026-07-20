@@ -27,12 +27,7 @@ export async function POST(request: NextRequest) {
 
     const { login, password } = result.data;
 
-    console.log("✅ Validation Passed");
-    console.log(result.data);
-
     const { token, user } = await authService.login(login, password);
-
-    console.log("✅ AuthService Success");
 
     const response = NextResponse.json({
       success: true,
@@ -41,7 +36,7 @@ export async function POST(request: NextRequest) {
     });
 
     response.cookies.set({
-      name: "accessToken",
+      name: "kotoze_access_token",
       value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -49,6 +44,17 @@ export async function POST(request: NextRequest) {
       path: "/",
       maxAge: 60 * 15,
     });
+
+console.log(
+  "Set-Cookie Header:",
+  response.headers.get("set-cookie")
+);
+
+return response;
+
+
+console.log("Response Headers:", [...response.headers.entries()]);
+console.log("Set-Cookie:", response.headers.get("set-cookie"));
 
     return response;
   } catch (error: any) {
