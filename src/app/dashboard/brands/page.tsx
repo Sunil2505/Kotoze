@@ -19,8 +19,7 @@ export default function BrandsPage() {
 
   const [formOpen, setFormOpen] = useState(false);
 
-  const [deleteOpen, setDeleteOpen] =
-    useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   function handleAddBrand() {
     setSelectedBrand(null);
@@ -40,15 +39,13 @@ export default function BrandsPage() {
   function handleSuccess() {
     setRefresh((prev) => prev + 1);
 
+    setSelectedBrand(null);
     setFormOpen(false);
     setDeleteOpen(false);
-
-    setSelectedBrand(null);
   }
 
   return (
     <main className="space-y-6 p-6">
-
       <div>
         <h1 className="text-3xl font-bold">
           Brands
@@ -85,7 +82,6 @@ export default function BrandsPage() {
         brand={selectedBrand}
         onSuccess={handleSuccess}
       />
-
     </main>
   );
 }

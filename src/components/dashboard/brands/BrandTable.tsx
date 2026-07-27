@@ -34,7 +34,6 @@ export default function BrandTable({
   onDelete,
 }: Props) {
   const [loading, setLoading] = useState(true);
-
   const [brands, setBrands] = useState<Brand[]>([]);
 
   async function loadBrands() {
@@ -42,7 +41,6 @@ export default function BrandTable({
       setLoading(true);
 
       const data = await getBrands();
-
       setBrands(data);
     } catch (error) {
       console.error(error);
@@ -64,24 +62,14 @@ export default function BrandTable({
 
     return brands.filter((brand) => {
       return (
-        brand.name
-          .toLowerCase()
-          .includes(keyword) ||
-
-        brand.slug
-          .toLowerCase()
-          .includes(keyword) ||
-
-        (brand.website ?? "")
-          .toLowerCase()
-          .includes(keyword)
+        brand.name.toLowerCase().includes(keyword) ||
+        brand.slug.toLowerCase().includes(keyword) ||
+        (brand.website ?? "").toLowerCase().includes(keyword)
       );
     });
   }, [brands, search]);
 
-  function getStatusBadge(
-    status: Brand["status"]
-  ) {
+  function getStatusBadge(status: Brand["status"]) {
     switch (status) {
       case "ACTIVE":
         return <Badge>Active</Badge>;
@@ -120,7 +108,7 @@ export default function BrandTable({
   return (
     <div className="overflow-hidden rounded-xl border bg-card">
       <Table>
-                <TableHeader>
+        <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
 
@@ -169,7 +157,7 @@ export default function BrandTable({
                   <a
                     href={brand.website}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
                     {brand.website}
@@ -186,7 +174,11 @@ export default function BrandTable({
               <TableCell>
                 {new Date(
                   brand.createdAt
-                ).toLocaleDateString()}
+                ).toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
               </TableCell>
 
               <TableCell className="text-right">
@@ -194,9 +186,7 @@ export default function BrandTable({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() =>
-                      onEdit?.(brand)
-                    }
+                    onClick={() => onEdit?.(brand)}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
@@ -204,9 +194,7 @@ export default function BrandTable({
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() =>
-                      onDelete?.(brand)
-                    }
+                    onClick={() => onDelete?.(brand)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

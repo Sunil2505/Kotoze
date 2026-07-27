@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import {
   Brand,
+  BrandFormData,
   createBrand,
   updateBrand,
 } from "@/lib/api/brand";
@@ -68,7 +69,7 @@ export default function BrandFormDialog({
     try {
       setLoading(true);
 
-      const payload = {
+      const payload: BrandFormData = {
         name,
         description,
         logo,
@@ -84,6 +85,7 @@ export default function BrandFormDialog({
       }
 
       onSuccess();
+      onOpenChange(false);
     } catch (error) {
       console.error(error);
 
@@ -103,9 +105,7 @@ export default function BrandFormDialog({
       onOpenChange={onOpenChange}
     >
       <DialogContent className="sm:max-w-lg">
-
         <DialogHeader>
-
           <DialogTitle>
             {brand ? "Edit Brand" : "Add Brand"}
           </DialogTitle>
@@ -115,12 +115,10 @@ export default function BrandFormDialog({
               ? "Update brand information."
               : "Create a new brand."}
           </DialogDescription>
-
         </DialogHeader>
 
         <div className="space-y-4">
-            
-                  <div>
+          <div>
             <label className="mb-2 block text-sm font-medium">
               Brand Name
             </label>
@@ -138,11 +136,11 @@ export default function BrandFormDialog({
             </label>
 
             <Textarea
+              rows={4}
               value={description}
               onChange={(e) =>
                 setDescription(e.target.value)
               }
-              rows={4}
               placeholder="Brand description"
             />
           </div>
@@ -196,10 +194,7 @@ export default function BrandFormDialog({
               value={status}
               onChange={(e) =>
                 setStatus(
-                  e.target.value as
-                    | "ACTIVE"
-                    | "INACTIVE"
-                    | "BLOCKED"
+                  e.target.value as BrandFormData["status"]
                 )
               }
               className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -222,17 +217,17 @@ export default function BrandFormDialog({
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
             disabled={loading}
+            onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
 
           <Button
-            onClick={handleSubmit}
             disabled={
               loading || name.trim().length === 0
             }
+            onClick={handleSubmit}
           >
             {loading
               ? "Saving..."
@@ -241,7 +236,6 @@ export default function BrandFormDialog({
               : "Create Brand"}
           </Button>
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
   );

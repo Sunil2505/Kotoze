@@ -28,7 +28,7 @@ interface Props {
 export default function DeleteConfirmationDialog({
   open,
   onOpenChange,
- brand,
+  brand,
   onSuccess,
 }: Props) {
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ export default function DeleteConfirmationDialog({
       alert(
         error instanceof Error
           ? error.message
-          : "Something went wrong"
+          : "Failed to delete brand."
       );
     } finally {
       setLoading(false);
@@ -69,34 +69,34 @@ export default function DeleteConfirmationDialog({
 
           <DialogDescription>
             Are you sure you want to delete{" "}
-            <strong>
+            <span className="font-semibold text-foreground">
               {brand?.name}
-            </strong>
+            </span>
             ?
-            <br />
-            This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
+
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          This brand will be marked as deleted and will no longer appear in the application.
+        </div>
 
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() =>
-              onOpenChange(false)
-            }
             disabled={loading}
+            onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
 
           <Button
             variant="destructive"
-            onClick={handleDelete}
             disabled={loading}
+            onClick={handleDelete}
           >
             {loading
               ? "Deleting..."
-              : "Delete"}
+              : "Delete Brand"}
           </Button>
         </DialogFooter>
       </DialogContent>
