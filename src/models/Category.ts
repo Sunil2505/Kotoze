@@ -76,7 +76,6 @@ const CategorySchema = new Schema<ICategory>(
   schemaOptions
 );
 
-CategorySchema.index({ parentId: 1 });
 CategorySchema.index({ name: "text" });
 
 const Category: Model<ICategory> =

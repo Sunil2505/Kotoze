@@ -73,9 +73,6 @@ const InventorySchema = new Schema<IInventory>(
   schemaOptions
 );
 
-InventorySchema.index({ productId: 1 });
-InventorySchema.index({ status: 1 });
-
 const Inventory: Model<IInventory> =
   mongoose.models.Inventory ||
   mongoose.model<IInventory>("Inventory", InventorySchema);

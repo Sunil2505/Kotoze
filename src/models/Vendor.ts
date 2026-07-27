@@ -110,10 +110,8 @@ const VendorSchema = new Schema<IVendor>(
   schemaOptions
 );
 
-VendorSchema.index({ vendorCode: 1 });
 VendorSchema.index({ businessName: "text" });
-VendorSchema.index({ mobile: 1 });
-VendorSchema.index({ email: 1 });
+
 
 const Vendor: Model<IVendor> =
   mongoose.models.Vendor ||

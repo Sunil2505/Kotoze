@@ -131,13 +131,6 @@ const ProductSchema = new Schema<IProduct>(
   schemaOptions
 );
 
-ProductSchema.index({ sku: 1 });
-ProductSchema.index({ vendorId: 1 });
-ProductSchema.index({ categoryId: 1 });
-ProductSchema.index({ brandId: 1 });
-ProductSchema.index({ slug: 1 });
-ProductSchema.index({ status: 1 });
-ProductSchema.index({ featured: 1 });
 ProductSchema.index({ name: "text" });
 
 const Product: Model<IProduct> =
