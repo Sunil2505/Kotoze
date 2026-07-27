@@ -49,7 +49,7 @@ export default function DeleteConfirmationDialog({
       alert(
         error instanceof Error
           ? error.message
-          : "Something went wrong"
+          : "Failed to delete vendor."
       );
     } finally {
       setLoading(false);
@@ -67,15 +67,15 @@ export default function DeleteConfirmationDialog({
             Delete Vendor
           </DialogTitle>
 
-          <DialogDescription>
-            Are you sure you want to delete{" "}
-            <strong>
-              {vendor?.businessName}
-            </strong>
-            ?
-            <br />
-            This action cannot be undone.
-          </DialogDescription>
+            <DialogDescription>
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-foreground">
+                {vendor?.businessName}
+              </span>
+              ?
+              <br />
+              This vendor will be marked as deleted and will no longer appear in the application.
+            </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
@@ -96,7 +96,7 @@ export default function DeleteConfirmationDialog({
           >
             {loading
               ? "Deleting..."
-              : "Delete"}
+              : "Delete Vendor"
           </Button>
         </DialogFooter>
       </DialogContent>

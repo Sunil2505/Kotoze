@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import {
   Vendor,
+  VendorFormData,
   createVendor,
   updateVendor,
 } from "@/lib/api/vendor";
@@ -91,17 +92,17 @@ export default function VendorFormDialog({
     try {
       setLoading(true);
 
-      const payload = {
-        businessName,
-        legalName,
-        contactPerson,
-        email,
-        mobile,
-        gstNumber,
-        panNumber,
-        status,
-        approvalStatus,
-      };
+        const payload: VendorFormData = {
+          businessName,
+          legalName,
+          contactPerson,
+          email,
+          mobile,
+          gstNumber,
+          panNumber,
+          status,
+          approvalStatus,
+        };
 
       if (vendor) {
         await updateVendor(
@@ -113,6 +114,7 @@ export default function VendorFormDialog({
       }
 
       onSuccess();
+      onOpenChange(false);
     } catch (error) {
       console.error(error);
 
@@ -251,12 +253,9 @@ export default function VendorFormDialog({
               value={status}
               onChange={(e) =>
                 setStatus(
-                  e.target.value as
-                    | "ACTIVE"
-                    | "INACTIVE"
-                    | "BLOCKED"
-                )
-              }
+                  e.target.value as VendorFormData["status"]
+                )    
+            }
               className="w-full rounded-md border bg-background px-3 py-2 text-sm"
             >
               <option value="ACTIVE">
@@ -282,10 +281,7 @@ export default function VendorFormDialog({
               value={approvalStatus}
               onChange={(e) =>
                 setApprovalStatus(
-                  e.target.value as
-                    | "PENDING"
-                    | "APPROVED"
-                    | "REJECTED"
+                  e.target.value as VendorFormData["approvalStatus"]
                 )
               }
               className="w-full rounded-md border bg-background px-3 py-2 text-sm"

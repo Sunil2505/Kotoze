@@ -29,7 +29,10 @@ export default function VendorToolbar({
         />
       </div>
 
-      <Button onClick={onAddVendor}>
+      <Button
+        onClick={onAddVendor}
+        className="whitespace-nowrap"
+      >
         <Plus className="mr-2 h-4 w-4" />
         Add Vendor
       </Button>

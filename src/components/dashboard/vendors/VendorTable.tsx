@@ -41,7 +41,6 @@ export default function VendorTable({
       setLoading(true);
 
       const data = await getVendors();
-
       setVendors(data);
     } catch (error) {
       console.error(error);
@@ -61,28 +60,16 @@ export default function VendorTable({
 
     return vendors.filter((vendor) => {
       return (
-        vendor.vendorCode
-          .toLowerCase()
-          .includes(keyword) ||
-        vendor.businessName
-          .toLowerCase()
-          .includes(keyword) ||
-        vendor.contactPerson
-          .toLowerCase()
-          .includes(keyword) ||
-        vendor.mobile
-          .toLowerCase()
-          .includes(keyword) ||
-        (vendor.email ?? "")
-          .toLowerCase()
-          .includes(keyword)
+        vendor.vendorCode.toLowerCase().includes(keyword) ||
+        vendor.businessName.toLowerCase().includes(keyword) ||
+        vendor.contactPerson.toLowerCase().includes(keyword) ||
+        vendor.mobile.toLowerCase().includes(keyword) ||
+        (vendor.email ?? "").toLowerCase().includes(keyword)
       );
     });
   }, [vendors, search]);
 
-  function getStatusBadge(
-    status: Vendor["status"]
-  ) {
+  function getStatusBadge(status: Vendor["status"]) {
     switch (status) {
       case "ACTIVE":
         return <Badge>Active</Badge>;
@@ -146,27 +133,21 @@ export default function VendorTable({
         Loading vendors...
       </div>
     );
-  }  return (
+  }
+
+  return (
     <div className="overflow-hidden rounded-xl border bg-card">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Vendor Code</TableHead>
-
             <TableHead>Business</TableHead>
-
             <TableHead>Contact Person</TableHead>
-
             <TableHead>Mobile</TableHead>
-
             <TableHead>Email</TableHead>
-
             <TableHead>Approval</TableHead>
-
             <TableHead>Status</TableHead>
-
             <TableHead>Created</TableHead>
-
             <TableHead className="text-right">
               Actions
             </TableHead>
@@ -228,7 +209,11 @@ export default function VendorTable({
               <TableCell>
                 {new Date(
                   vendor.createdAt
-                ).toLocaleDateString()}
+                ).toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
               </TableCell>
 
               <TableCell className="text-right">

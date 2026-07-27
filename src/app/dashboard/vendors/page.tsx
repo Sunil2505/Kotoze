@@ -37,14 +37,14 @@ export default function VendorsPage() {
     setDeleteOpen(true);
   }
 
-  function handleSuccess() {
-    setRefresh((prev) => prev + 1);
+function handleSuccess() {
+  setRefresh((prev) => prev + 1);
 
-    setFormOpen(false);
-    setDeleteOpen(false);
+  setSelectedVendor(null);
 
-    setSelectedVendor(null);
-  }
+  setFormOpen(false);
+  setDeleteOpen(false);
+}
 
   return (
     <main className="space-y-6 p-6">
