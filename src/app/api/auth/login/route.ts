@@ -21,43 +21,48 @@ export async function POST(request: NextRequest) {
           message: "Validation failed.",
           errors: result.error.flatten(),
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
     const { login, password } = result.data;
 
-    const { token, user } = await authService.login(login, password);
+    const { token, user } = await authService.login(
+      login,
+      password
+    );
 
-    const response = NextResponse.json({
-      success: true,
-      message: "Login successful.",
-      user,
-    });
+    const response = NextResponse.json(
+      {
+        success: true,
+        message: "Login successful.",
+        user,
+      },
+      {
+        status: 200,
+      }
+    );
 
-    response.cookies.set({
-      name: "kotoze_access_token",
-      value: token,
+    response.cookies.set("kotoze_access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 15,
+      maxAge: 60 * 15, // 15 minutes
     });
 
-console.log(
-  "Set-Cookie Header:",
-  response.headers.get("set-cookie")
-);
-
-return response;
-
-
-console.log("Response Headers:", [...response.headers.entries()]);
-console.log("Set-Cookie:", response.headers.get("set-cookie"));
+    console.log("================================");
+    console.log(
+      "Set-Cookie:",
+      response.headers.get("set-cookie")
+    );
 
     return response;
   } catch (error: any) {
+    console.error(error);
+
     return NextResponse.json(
       {
         success: false,

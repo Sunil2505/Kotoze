@@ -1,4 +1,5 @@
 import { FilterQuery } from "mongoose";
+
 import BaseRepository from "./BaseRepository";
 import Category, { ICategory } from "@/models/Category";
 import { Status } from "@/types/common";
@@ -31,9 +32,28 @@ export default class CategoryRepository extends BaseRepository<ICategory> {
       });
   }
 
+  async findParentCategories() {
+    return this.model
+      .find({
+        isDeleted: false,
+        parent: null,
+      })
+      .sort({
+        sortOrder: 1,
+        createdAt: -1,
+      });
+  }
+
   async findBySlug(slug: string) {
     return this.model.findOne({
       slug,
+      isDeleted: false,
+    });
+  }
+
+  async findByName(name: string) {
+    return this.model.findOne({
+      name,
       isDeleted: false,
     });
   }
@@ -50,19 +70,6 @@ export default class CategoryRepository extends BaseRepository<ICategory> {
       slug,
       isDeleted: false,
     });
-  }
-
-  async findParentCategories() {
-    return this.model
-      .find({
-        parentId: null,
-        isDeleted: false,
-        status: Status.ACTIVE,
-      })
-      .sort({
-        sortOrder: 1,
-        name: 1,
-      });
   }
 
   async search(keyword: string) {
@@ -151,8 +158,17 @@ export default class CategoryRepository extends BaseRepository<ICategory> {
   ) {
     return this.model.findByIdAndUpdate(
       id,
+      { status },
+      { new: true }
+    );
+  }
+
+  async softDelete(id: string) {
+    return this.model.findByIdAndUpdate(
+      id,
       {
-        status,
+        isDeleted: true,
+        deletedAt: new Date(),
       },
       {
         new: true,

@@ -1,17 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import PasswordInput from "./PasswordInput";
 import { useRouter } from "next/navigation";
+
+import PasswordInput from "./PasswordInput";
 
 export default function LoginForm() {
   const router = useRouter();
+
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
 
     setLoading(true);
@@ -19,31 +24,29 @@ export default function LoginForm() {
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           login,
           password,
+          rememberMe,
         }),
       });
 
-          const data = await response.json();
+      const data = await response.json();
 
-          console.log("Response Status:", response.status);
-          console.log("Response Data:", data);
+      console.log("Status:", response.status);
+      console.log("Response:", data);
 
-          if (!response.ok) {
-            alert(data.message);
-            return;
-          }
+      if (!response.ok) {
+        alert(data.message ?? "Login failed.");
+        return;
+      }
 
-          console.log("➡️ Redirecting to Dashboard...");
-
-            window.location.href = "/dashboard";
-
-
-      console.log(data);
+      router.replace("/dashboard");
+      router.refresh();
     } catch (error) {
       console.error(error);
       alert("Something went wrong.");
@@ -65,6 +68,7 @@ export default function LoginForm() {
           onChange={(e) => setLogin(e.target.value)}
           placeholder="Enter mobile number or email"
           className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-emerald-600"
+          required
         />
       </div>
 
@@ -84,7 +88,9 @@ export default function LoginForm() {
           <input
             type="checkbox"
             checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
+            onChange={(e) =>
+              setRememberMe(e.target.checked)
+            }
           />
           Remember Me
         </label>

@@ -1,4 +1,4 @@
-import { SignJWT, jwtVerify } from "jose";
+import { JWTPayload, jwtVerify, SignJWT } from "jose";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -8,7 +8,7 @@ if (!JWT_SECRET) {
 
 const secret = new TextEncoder().encode(JWT_SECRET);
 
-export interface AccessTokenPayload {
+export interface AccessTokenPayload extends JWTPayload {
   userId: string;
   roleId: string;
 }
@@ -16,7 +16,10 @@ export interface AccessTokenPayload {
 export async function generateAccessToken(
   payload: AccessTokenPayload
 ): Promise<string> {
-  return await new SignJWT(payload)
+  return await new SignJWT({
+    userId: payload.userId,
+    roleId: payload.roleId,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("15m")

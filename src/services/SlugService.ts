@@ -1,4 +1,4 @@
-export default class SlugService {
+ export default class SlugService {
   /**
    * Convert text into URL-friendly slug.
    *

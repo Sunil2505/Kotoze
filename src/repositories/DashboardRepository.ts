@@ -14,11 +14,11 @@ export default class DashboardRepository {
       totalCategories,
       totalBrands,
     ] = await Promise.all([
-      User.countDocuments(),
-      Vendor.countDocuments(),
-      Product.countDocuments(),
-      Category.countDocuments(),
-      Brand.countDocuments(),
+      User.countDocuments({ isDeleted: false }),
+      Vendor.countDocuments({ isDeleted: false }),
+      Product.countDocuments({ isDeleted: false }),
+      Category.countDocuments({ isDeleted: false }),
+      Brand.countDocuments({ isDeleted: false }),
     ]);
 
     return {
@@ -52,29 +52,52 @@ export default class DashboardRepository {
   }
 
   static async getRecentUsers(limit = 5) {
-    return User.find()
+    const users = await User.find({
+      isDeleted: false,
+    })
       .sort({ createdAt: -1 })
       .limit(limit)
-      .select("fullName email mobile createdAt")
+      .select("_id fullName email createdAt")
       .lean();
+
+    return users.map((user: any) => ({
+      _id: String(user._id),
+      name: user.fullName,
+      email: user.email,
+      createdAt: user.createdAt,
+    }));
   }
 
   static async getRecentProducts(limit = 5) {
-    return Product.find()
+    const products = await Product.find({
+      isDeleted: false,
+    })
       .sort({ createdAt: -1 })
       .limit(limit)
-      .select("name sku createdAt")
+      .select("_id name sku createdAt")
       .lean();
+
+    return products.map((product: any) => ({
+      _id: String(product._id),
+      name: product.name,
+      sku: product.sku,
+      stock: 0,
+      createdAt: product.createdAt,
+    }));
   }
 
   static async getDashboardOverview() {
-    const [summary, inventory, recentUsers, recentProducts] =
-      await Promise.all([
-        this.getSummary(),
-        this.getInventorySummary(),
-        this.getRecentUsers(),
-        this.getRecentProducts(),
-      ]);
+    const [
+      summary,
+      inventory,
+      recentUsers,
+      recentProducts,
+    ] = await Promise.all([
+      this.getSummary(),
+      this.getInventorySummary(),
+      this.getRecentUsers(),
+      this.getRecentProducts(),
+    ]);
 
     return {
       summary,
