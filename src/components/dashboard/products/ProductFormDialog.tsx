@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import {
   Product,
+  ProductFormData,
   createProduct,
   updateProduct,
 } from "@/lib/api/product";
@@ -183,7 +184,7 @@ export default function ProductFormDialog({
     try {
       setLoading(true);
 
-      const payload = {
+      const payload: ProductFormData = {
         vendorId,
         categoryId,
         brandId,
@@ -215,7 +216,7 @@ export default function ProductFormDialog({
       alert(
         error instanceof Error
           ? error.message
-          : "Something went wrong"
+          : "Failed to save product."
       );
     } finally {
       setLoading(false);
@@ -437,10 +438,7 @@ export default function ProductFormDialog({
               value={status}
               onValueChange={(value) =>
                 setStatus(
-                  value as
-                    | "ACTIVE"
-                    | "INACTIVE"
-                    | "BLOCKED"
+                  value as ProductFormData["status"]
                 )
               }
             >
@@ -496,7 +494,9 @@ export default function ProductFormDialog({
               !name.trim() ||
               !vendorId ||
               !categoryId ||
-              !brandId
+              !brandId ||
+              sellingPrice <= 0 ||
+              costPrice < 0
             }
           >
             {loading

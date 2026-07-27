@@ -29,7 +29,10 @@ export default function ProductToolbar({
         />
       </div>
 
-      <Button onClick={onAddProduct}>
+      <Button
+        onClick={onAddProduct}
+        className="whitespace-nowrap"
+      >
         <Plus className="mr-2 h-4 w-4" />
         Add Product
       </Button>

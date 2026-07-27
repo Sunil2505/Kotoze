@@ -46,18 +46,39 @@ export interface Product {
   updatedAt: string;
 }
 
+export interface ProductFormData {
+  vendorId: string;
+  categoryId: string;
+  brandId: string;
+
+  name: string;
+
+  shortDescription?: string;
+  description?: string;
+
+  costPrice: number;
+  sellingPrice: number;
+  comparePrice?: number;
+
+  thumbnail?: string;
+
+  featured: boolean;
+
+  status: "ACTIVE" | "INACTIVE" | "BLOCKED";
+}
+
 const BASE_URL = "/api/products";
 
 async function handleResponse(res: Response) {
-  if (!res.ok) {
-    const error = await res.json();
+  const data = await res.json();
 
+  if (!res.ok) {
     throw new Error(
-      error.message || "Something went wrong"
+      data.message || "Something went wrong"
     );
   }
 
-  return res.json();
+  return data;
 }
 
 export async function getProducts(): Promise<Product[]> {
@@ -65,7 +86,9 @@ export async function getProducts(): Promise<Product[]> {
     cache: "no-store",
   });
 
-  return handleResponse(res);
+  const result = await handleResponse(res);
+
+  return result.data;
 }
 
 export async function getProduct(
@@ -75,11 +98,13 @@ export async function getProduct(
     cache: "no-store",
   });
 
-  return handleResponse(res);
+  const result = await handleResponse(res);
+
+  return result.data;
 }
 
 export async function createProduct(
-  data: Partial<Product>
+  data: ProductFormData
 ): Promise<Product> {
   const res = await fetch(BASE_URL, {
     method: "POST",
@@ -91,12 +116,14 @@ export async function createProduct(
     body: JSON.stringify(data),
   });
 
-  return handleResponse(res);
+  const result = await handleResponse(res);
+
+  return result.data;
 }
 
 export async function updateProduct(
   id: string,
-  data: Partial<Product>
+  data: ProductFormData
 ): Promise<Product> {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
@@ -108,7 +135,8 @@ export async function updateProduct(
     body: JSON.stringify(data),
   });
 
-  return handleResponse(res);
+  const result = await handleResponse(res);
+  return result.data;
 }
 
 export async function deleteProduct(

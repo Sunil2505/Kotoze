@@ -1,150 +1,263 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
-import DataTable from "@/components/dashboard/common/DataTable";
-import StatusBadge from "@/components/dashboard/common/StatusBadge";
-import Loading from "@/components/dashboard/common/Loading";
+import {
+  Product,
+  getProducts,
+} from "@/lib/api/product";
 
-import ProductToolbar from "./ProductToolbar";
-import ProductFormDialog from "./ProductFormDialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-interface Product {
-  _id: string;
-  name: string;
-  sku: string;
-  sellingPrice: number;
-  status: string;
-  categoryId?: {
-    _id?: string;
-    name: string;
-  };
-  brandId?: {
-    _id?: string;
-    name: string;
-  };
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+interface Props {
+  search: string;
+  refresh?: number;
+  onEdit?: (product: Product) => void;
+  onDelete?: (product: Product) => void;
 }
 
-export default function ProductTable() {
-  const [products, setProducts] = useState<Product[]>([]);
+export default function ProductTable({
+  search,
+  refresh,
+  onEdit,
+  onDelete,
+}: Props) {
   const [loading, setLoading] = useState(true);
 
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] =
-    useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
+  async function loadProducts() {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/products");
-      const data = await res.json();
+      const data = await getProducts();
 
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
+      setProducts(data);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleAddProduct() {
-    setSelectedProduct(null);
-    setOpen(true);
+  useEffect(() => {
+    loadProducts();
+  }, [refresh]);
+
+  const filteredProducts = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    if (!keyword) return products;
+
+    return products.filter((product) => {
+      const vendor =
+        typeof product.vendorId === "object"
+          ? product.vendorId.businessName
+          : "";
+
+      const category =
+        typeof product.categoryId === "object"
+          ? product.categoryId.name
+          : "";
+
+      const brand =
+        typeof product.brandId === "object"
+          ? product.brandId.name
+          : "";
+
+      return (
+        product.name
+          .toLowerCase()
+          .includes(keyword) ||
+        product.sku
+          .toLowerCase()
+          .includes(keyword) ||
+        vendor
+          .toLowerCase()
+          .includes(keyword) ||
+        category
+          .toLowerCase()
+          .includes(keyword) ||
+        brand
+          .toLowerCase()
+          .includes(keyword)
+      );
+    });
+  }, [products, search]);
+
+  function getStatusBadge(
+    status: Product["status"]
+  ) {
+    switch (status) {
+      case "ACTIVE":
+        return <Badge>Active</Badge>;
+
+      case "INACTIVE":
+        return (
+          <Badge variant="secondary">
+            Inactive
+          </Badge>
+        );
+
+      case "BLOCKED":
+        return (
+          <Badge variant="destructive">
+            Blocked
+          </Badge>
+        );
+
+      default:
+        return (
+          <Badge variant="outline">
+            Unknown
+          </Badge>
+        );
+    }
   }
 
-  function handleEditProduct(product: Product) {
-    setSelectedProduct(product);
-    setOpen(true);
+  if (loading) {
+    return (
+      <div className="rounded-xl border bg-card p-8 text-center">
+        Loading products...
+      </div>
+    );
   }
-
-  if (loading) return <Loading />;
-
-  const columns = [
-    {
-      key: "name",
-      title: "Product",
-    },
-    {
-      key: "sku",
-      title: "SKU",
-    },
-    {
-      key: "category",
-      title: "Category",
-      render: (row: Product) => row.categoryId?.name ?? "-",
-    },
-    {
-      key: "brand",
-      title: "Brand",
-      render: (row: Product) => row.brandId?.name ?? "-",
-    },
-    {
-      key: "price",
-      title: "Price",
-      render: (row: Product) => `₹${row.sellingPrice}`,
-    },
-    {
-      key: "status",
-      title: "Status",
-      render: (row: Product) => (
-        <StatusBadge status={row.status} />
-      ),
-    },
-    {
-      key: "actions",
-      title: "Actions",
-      render: (row: Product) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleEditProduct(row)}
-            className="rounded p-2 hover:bg-gray-100"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-
-          <button
-            className="rounded p-2 text-red-600 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      ),
-    },
-  ];
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
-    <>
-      <ProductToolbar
-        search={search}
-        onSearchChange={setSearch}
-        onAddProduct={handleAddProduct}
-      />
+    <div className="overflow-hidden rounded-xl border bg-card">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>SKU</TableHead>
 
-      <div className="mt-6">
-        <DataTable
-          columns={columns}
-          data={filteredProducts}
-          emptyMessage="No products found."
-        />
-      </div>
+            <TableHead>Product</TableHead>
 
-      <ProductFormDialog
-        open={open}
-        onOpenChange={setOpen}
-        product={selectedProduct as any}
-        onSuccess={fetchProducts}
-      />
-    </>
+            <TableHead>Category</TableHead>
+
+            <TableHead>Brand</TableHead>
+
+            <TableHead>Vendor</TableHead>
+
+            <TableHead>Selling Price</TableHead>
+
+            <TableHead>Status</TableHead>
+
+            <TableHead>Created</TableHead>
+
+            <TableHead className="text-right">
+              Actions
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {filteredProducts.length === 0 && (
+            <TableRow>
+              <TableCell
+                colSpan={9}
+                className="py-10 text-center text-muted-foreground"
+              >
+                No products found.
+              </TableCell>
+            </TableRow>
+          )}
+
+          {filteredProducts.map((product) => (
+            <TableRow key={product._id}>
+              <TableCell className="font-medium">
+                {product.sku}
+              </TableCell>
+
+              <TableCell>
+                <div className="font-medium">
+                  {product.name}
+                </div>
+
+                {product.shortDescription && (
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {product.shortDescription}
+                  </div>
+                )}
+              </TableCell>
+
+              <TableCell>
+                {typeof product.categoryId ===
+                "object"
+                  ? product.categoryId.name
+                  : "-"}
+              </TableCell>
+
+              <TableCell>
+                {typeof product.brandId ===
+                "object"
+                  ? product.brandId.name
+                  : "-"}
+              </TableCell>
+
+              <TableCell>
+                {typeof product.vendorId ===
+                "object"
+                  ? product.vendorId.businessName
+                  : "-"}
+              </TableCell>
+
+              <TableCell>
+                ₹
+                {product.sellingPrice.toLocaleString(
+                  "en-IN"
+                )}
+              </TableCell>
+
+              <TableCell>
+                {getStatusBadge(product.status)}
+              </TableCell>
+
+              <TableCell>
+                {new Date(
+                  product.createdAt
+                ).toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </TableCell>
+
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onEdit?.(product)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() =>
+                      onDelete?.(product)
+                    }
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
