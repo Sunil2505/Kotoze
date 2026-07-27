@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 
 interface ProductToolbarProps {
   search: string;
-  onSearchChange(value: string): void;
-  onAddProduct(): void;
+  onSearchChange: (value: string) => void;
+  onAddProduct: () => void;
 }
 
 export default function ProductToolbar({

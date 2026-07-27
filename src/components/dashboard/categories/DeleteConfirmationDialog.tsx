@@ -45,7 +45,12 @@ export default function DeleteConfirmationDialog({
       onOpenChange(false);
     } catch (error) {
       console.error(error);
-      alert("Failed to delete category.");
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete category."
+      );
     } finally {
       setLoading(false);
     }
@@ -57,30 +62,25 @@ export default function DeleteConfirmationDialog({
       onOpenChange={onOpenChange}
     >
       <DialogContent>
-
         <DialogHeader>
-
           <DialogTitle>
             Delete Category
           </DialogTitle>
 
           <DialogDescription>
-            Are you sure you want to delete
-            <span className="font-semibold">
-              {" "}
+            Are you sure you want to delete{" "}
+            <span className="font-semibold text-foreground">
               {category?.name}
             </span>
             ?
           </DialogDescription>
-
         </DialogHeader>
 
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          This action cannot be undone.
+          This category will be marked as deleted and will no longer appear in the application.
         </div>
 
         <DialogFooter>
-
           <Button
             variant="outline"
             disabled={loading}
@@ -98,9 +98,7 @@ export default function DeleteConfirmationDialog({
               ? "Deleting..."
               : "Delete Category"}
           </Button>
-
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
   );

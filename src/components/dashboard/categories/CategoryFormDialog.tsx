@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import {
   Category,
+  CategoryFormData,
   createCategory,
   updateCategory,
 } from "@/lib/api/category";
@@ -28,18 +29,8 @@ interface CategoryFormDialogProps {
   onSuccess: () => void;
 }
 
-interface FormData {
-  name: string;
-  slug: string;
-  description: string;
-  parentId: string;
-  sortOrder: number;
-  status: "ACTIVE" | "INACTIVE" | "BLOCKED";
-}
-
-const initialForm: FormData = {
+const initialForm: CategoryFormData = {
   name: "",
-  slug: "",
   description: "",
   parentId: "",
   sortOrder: 0,
@@ -52,7 +43,8 @@ export default function CategoryFormDialog({
   category,
   onSuccess,
 }: CategoryFormDialogProps) {
-  const [form, setForm] = useState<FormData>(initialForm);
+  const [form, setForm] =
+    useState<CategoryFormData>(initialForm);
 
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +52,6 @@ export default function CategoryFormDialog({
     if (category) {
       setForm({
         name: category.name,
-        slug: category.slug,
         description: category.description ?? "",
         parentId: category.parentId ?? "",
         sortOrder: category.sortOrder,
@@ -72,7 +63,7 @@ export default function CategoryFormDialog({
   }, [category, open]);
 
   function handleChange(
-    field: keyof FormData,
+    field: keyof CategoryFormData,
     value: string | number
   ) {
     setForm((prev) => ({
@@ -100,7 +91,11 @@ export default function CategoryFormDialog({
       onOpenChange(false);
     } catch (error) {
       console.error(error);
-      alert("Something went wrong.");
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
     } finally {
       setLoading(false);
     }
@@ -112,9 +107,7 @@ export default function CategoryFormDialog({
       onOpenChange={onOpenChange}
     >
       <DialogContent className="max-w-2xl">
-
         <DialogHeader>
-
           <DialogTitle>
             {category
               ? "Edit Category"
@@ -124,13 +117,10 @@ export default function CategoryFormDialog({
           <DialogDescription>
             Fill the category details below.
           </DialogDescription>
-
         </DialogHeader>
 
         <div className="grid gap-4 py-2">
-
           <div>
-
             <label className="mb-2 block text-sm font-medium">
               Category Name
             </label>
@@ -140,27 +130,11 @@ export default function CategoryFormDialog({
               onChange={(e) =>
                 handleChange("name", e.target.value)
               }
+              placeholder="Enter category name"
             />
-
           </div>
 
           <div>
-
-            <label className="mb-2 block text-sm font-medium">
-              Slug
-            </label>
-
-            <Input
-              value={form.slug}
-              onChange={(e) =>
-                handleChange("slug", e.target.value)
-              }
-            />
-
-          </div>
-
-          <div>
-
             <label className="mb-2 block text-sm font-medium">
               Description
             </label>
@@ -168,6 +142,7 @@ export default function CategoryFormDialog({
             <Textarea
               rows={4}
               value={form.description}
+              placeholder="Enter description"
               onChange={(e) =>
                 handleChange(
                   "description",
@@ -175,13 +150,10 @@ export default function CategoryFormDialog({
                 )
               }
             />
-
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-
             <div>
-
               <label className="mb-2 block text-sm font-medium">
                 Sort Order
               </label>
@@ -196,11 +168,9 @@ export default function CategoryFormDialog({
                   )
                 }
               />
-
             </div>
 
             <div>
-
               <label className="mb-2 block text-sm font-medium">
                 Status
               </label>
@@ -210,10 +180,10 @@ export default function CategoryFormDialog({
                 onChange={(e) =>
                   handleChange(
                     "status",
-                    e.target.value
+                    e.target.value as CategoryFormData["status"]
                   )
                 }
-                className="h-8 w-full rounded-lg border border-input bg-transparent px-2"
+                className="h-10 w-full rounded-md border border-input bg-background px-3"
               >
                 <option value="ACTIVE">
                   ACTIVE
@@ -227,14 +197,11 @@ export default function CategoryFormDialog({
                   BLOCKED
                 </option>
               </select>
-
             </div>
-
           </div>
-                  </div>
+        </div>
 
         <DialogFooter>
-
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
@@ -252,12 +219,10 @@ export default function CategoryFormDialog({
                 ? "Updating..."
                 : "Saving..."
               : category
-                ? "Update Category"
-                : "Create Category"}
+              ? "Update Category"
+              : "Create Category"}
           </Button>
-
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
   );
