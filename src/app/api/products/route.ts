@@ -11,11 +11,17 @@ export async function GET() {
 
     const products = await productService.getAll();
 
-    return NextResponse.json(products);
+    return NextResponse.json({
+      data: products,
+    });
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message },
-      { status: 500 }
+      {
+        message: error.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
@@ -29,13 +35,22 @@ export async function POST(request: NextRequest) {
     const product =
       await productService.createProduct(body);
 
-    return NextResponse.json(product, {
-      status: 201,
-    });
+    return NextResponse.json(
+      {
+        data: product,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message },
-      { status: 400 }
+      {
+        message: error.message,
+      },
+      {
+        status: 400,
+      }
     );
   }
 }

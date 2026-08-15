@@ -23,7 +23,9 @@ export async function GET(
 
     const product = await productService.getById(id);
 
-    return NextResponse.json(product);
+    return NextResponse.json({
+      data: product,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -51,7 +53,9 @@ export async function PUT(
     const product =
       await productService.updateProduct(id, body);
 
-    return NextResponse.json(product);
+    return NextResponse.json({
+      data: product,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -77,7 +81,9 @@ export async function DELETE(
     await productService.deleteProduct(id);
 
     return NextResponse.json({
-      success: true,
+      data: {
+        success: true,
+      },
       message: "Product deleted successfully.",
     });
   } catch (error: any) {

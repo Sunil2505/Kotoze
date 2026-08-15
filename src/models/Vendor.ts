@@ -117,4 +117,5 @@ const Vendor: Model<IVendor> =
   mongoose.models.Vendor ||
   mongoose.model<IVendor>("Vendor", VendorSchema);
 
-export default Vendor;
+export default mongoose.models.Vendor ||
+  mongoose.model("Vendor", VendorSchema);

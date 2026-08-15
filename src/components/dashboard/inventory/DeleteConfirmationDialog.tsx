@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 import {
-  Vendor,
-  deleteVendor,
-} from "@/lib/api/vendor";
+  Inventory,
+  deleteInventory,
+} from "@/lib/api/inventory";
 
 import { Button } from "@/components/ui/button";
 
@@ -21,27 +21,28 @@ import {
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  vendor: Vendor | null;
+  inventory: Inventory | null;
   onSuccess: () => void;
 }
 
 export default function DeleteConfirmationDialog({
   open,
   onOpenChange,
-  vendor,
+  inventory,
   onSuccess,
 }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
-    if (!vendor) return;
+    if (!inventory) return;
 
     try {
       setLoading(true);
 
-      await deleteVendor(vendor._id);
+      await deleteInventory(inventory._id);
 
       onSuccess();
+
       onOpenChange(false);
     } catch (error) {
       console.error(error);
@@ -49,7 +50,7 @@ export default function DeleteConfirmationDialog({
       alert(
         error instanceof Error
           ? error.message
-          : "Failed to delete vendor."
+          : "Failed to delete inventory."
       );
     } finally {
       setLoading(false);
@@ -61,20 +62,16 @@ export default function DeleteConfirmationDialog({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Delete Vendor
+            Delete Inventory
           </DialogTitle>
 
           <DialogDescription>
-            Are you sure you want to delete{" "}
-            <span className="font-semibold text-foreground">
-              {vendor?.businessName}
-            </span>
-            ?
-            <br />
-            This vendor will be marked as deleted and will no longer appear in the application.
+            Are you sure you want to delete this
+            inventory record? This action cannot
+            be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -94,7 +91,7 @@ export default function DeleteConfirmationDialog({
           >
             {loading
               ? "Deleting..."
-              : "Delete Vendor"}
+              : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

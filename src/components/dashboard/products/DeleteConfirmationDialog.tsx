@@ -61,7 +61,7 @@ export default function DeleteConfirmationDialog({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[30vw] max-w-md mx-auto my-6 p-6">
         <DialogHeader>
           <DialogTitle>
             Delete Product

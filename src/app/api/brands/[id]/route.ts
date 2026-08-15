@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/mongodb";
-import VendorService from "@/services/VendorService";
+import BrandService from "@/services/BrandService";
 
-const vendorService = new VendorService();
+const brandService = new BrandService();
 
 interface RouteContext {
   params: Promise<{
@@ -11,7 +11,7 @@ interface RouteContext {
   }>;
 }
 
-// GET /api/vendors/:id
+// GET /api/brands/:id
 export async function GET(
   request: NextRequest,
   context: RouteContext
@@ -21,9 +21,11 @@ export async function GET(
 
     const { id } = await context.params;
 
-    const vendor = await vendorService.getById(id);
+    const brand = await brandService.getById(id);
 
-    return NextResponse.json(vendor);
+    return NextResponse.json({
+      data: brand,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -36,7 +38,7 @@ export async function GET(
   }
 }
 
-// PUT /api/vendors/:id
+// PUT /api/brands/:id
 export async function PUT(
   request: NextRequest,
   context: RouteContext
@@ -48,12 +50,14 @@ export async function PUT(
 
     const body = await request.json();
 
-    const vendor = await vendorService.updateVendor(
+    const brand = await brandService.updateBrand(
       id,
       body
     );
 
-    return NextResponse.json(vendor);
+    return NextResponse.json({
+      data: brand,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -66,7 +70,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/vendors/:id
+// DELETE /api/brands/:id
 export async function DELETE(
   request: NextRequest,
   context: RouteContext
@@ -76,11 +80,13 @@ export async function DELETE(
 
     const { id } = await context.params;
 
-    await vendorService.deleteVendor(id);
+    await brandService.deleteBrand(id);
 
     return NextResponse.json({
-      success: true,
-      message: "Vendor deleted successfully.",
+      data: {
+        success: true,
+      },
+      message: "Brand deleted successfully.",
     });
   } catch (error: any) {
     return NextResponse.json(

@@ -74,6 +74,7 @@ const InventoryTransactionSchema = new Schema<IInventoryTransaction>(
     quantity: {
       type: Number,
       required: true,
+      min: 1,
     },
 
     remarks: {
@@ -94,18 +95,34 @@ const InventoryTransactionSchema = new Schema<IInventoryTransaction>(
   schemaOptions
 );
 
+// Inventory history by inventory
 InventoryTransactionSchema.index({
   inventoryId: 1,
   createdAt: -1,
 });
 
+// Product transaction history
 InventoryTransactionSchema.index({
   productId: 1,
   createdAt: -1,
 });
 
+// Transaction type filtering
 InventoryTransactionSchema.index({
   transactionType: 1,
+});
+
+// Product + transaction type history
+InventoryTransactionSchema.index({
+  productId: 1,
+  transactionType: 1,
+  createdAt: -1,
+});
+
+// Active transaction history
+InventoryTransactionSchema.index({
+  isDeleted: 1,
+  createdAt: -1,
 });
 
 const InventoryTransaction: Model<IInventoryTransaction> =

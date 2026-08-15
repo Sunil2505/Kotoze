@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/mongodb";
-import VendorService from "@/services/VendorService";
+import BrandService from "@/services/BrandService";
 
-const vendorService = new VendorService();
+const brandService = new BrandService();
 
 export async function GET() {
   try {
     await connectDB();
 
-    const vendors = await vendorService.getAll();
+    const brands = await brandService.getAll();
 
-    return NextResponse.json(vendors);
+    return NextResponse.json({
+      data: brands,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -30,12 +32,16 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const vendor =
-      await vendorService.createVendor(body);
+    const brand = await brandService.createBrand(body);
 
-    return NextResponse.json(vendor, {
-      status: 201,
-    });
+    return NextResponse.json(
+      {
+        data: brand,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error: any) {
     return NextResponse.json(
       {

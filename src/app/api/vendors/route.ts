@@ -11,11 +11,17 @@ export async function GET() {
 
     const vendors = await vendorService.getAll();
 
-    return NextResponse.json(vendors);
+    return NextResponse.json({
+      data: vendors,
+    });
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message },
-      { status: 500 }
+      {
+        message: error.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
@@ -28,13 +34,22 @@ export async function POST(request: NextRequest) {
 
     const vendor = await vendorService.createVendor(body);
 
-    return NextResponse.json(vendor, {
-      status: 201,
-    });
+    return NextResponse.json(
+      {
+        data: vendor,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message },
-      { status: 400 }
+      {
+        message: error.message,
+      },
+      {
+        status: 400,
+      }
     );
   }
 }

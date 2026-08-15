@@ -45,21 +45,19 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    response.cookies.set("kotoze_access_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 15, // 15 minutes
-    });
+response.cookies.set("kotoze_access_token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/",
+  maxAge: 60 * 15,
+});
 
-    console.log("================================");
-    console.log(
-      "Set-Cookie:",
-      response.headers.get("set-cookie")
-    );
+console.log("================================");
+console.log("COOKIE AFTER SET:");
+console.log(response.cookies.get("kotoze_access_token"));
 
-    return response;
+return response;
   } catch (error: any) {
     console.error(error);
 

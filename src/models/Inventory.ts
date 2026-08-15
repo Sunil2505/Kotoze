@@ -73,6 +73,12 @@ const InventorySchema = new Schema<IInventory>(
   schemaOptions
 );
 
+// Compound index for faster inventory queries
+InventorySchema.index({
+  status: 1,
+  isDeleted: 1,
+});
+
 const Inventory: Model<IInventory> =
   mongoose.models.Inventory ||
   mongoose.model<IInventory>("Inventory", InventorySchema);

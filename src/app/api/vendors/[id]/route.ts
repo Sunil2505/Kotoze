@@ -23,7 +23,9 @@ export async function GET(
 
     const vendor = await vendorService.getById(id);
 
-    return NextResponse.json(vendor);
+    return NextResponse.json({
+      data: vendor,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -53,7 +55,9 @@ export async function PUT(
       body
     );
 
-    return NextResponse.json(vendor);
+    return NextResponse.json({
+      data: vendor,
+    });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -79,7 +83,9 @@ export async function DELETE(
     await vendorService.deleteVendor(id);
 
     return NextResponse.json({
-      success: true,
+      data: {
+        success: true,
+      },
       message: "Vendor deleted successfully.",
     });
   } catch (error: any) {

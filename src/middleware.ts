@@ -8,7 +8,11 @@ export async function middleware(request: NextRequest) {
   console.log("================================");
   console.log("PATH:", pathname);
   console.log("COOKIE HEADER:", request.headers.get("cookie"));
-  console.log("TOKEN:", token);
+  console.log("ALL COOKIES:");
+console.log(request.cookies.getAll());
+
+console.log("TOKEN:");
+console.log(request.cookies.get("kotoze_access_token"));
 
   if (pathname.startsWith("/dashboard")) {
     if (!token) {

@@ -1,6 +1,9 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import BaseSchema, { schemaOptions } from "./BaseModel";
 import { Status } from "@/types/common";
+import "@/models/Vendor";
+import "@/models/Category";
+import "@/models/Brand";
 
 export interface IProduct extends Document {
   sku: string;

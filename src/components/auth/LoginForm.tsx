@@ -40,13 +40,13 @@ export default function LoginForm() {
       console.log("Status:", response.status);
       console.log("Response:", data);
 
-      if (!response.ok) {
-        alert(data.message ?? "Login failed.");
-        return;
-      }
+ if (!response.ok) {
+  alert(data.message ?? "Login failed.");
+  return;
+}
 
-      router.replace("/dashboard");
-      router.refresh();
+// Temporary test
+window.location.href = "/dashboard";
     } catch (error) {
       console.error(error);
       alert("Something went wrong.");

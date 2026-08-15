@@ -8,6 +8,7 @@ import ProductToolbar from "@/components/dashboard/products/ProductToolbar";
 import ProductTable from "@/components/dashboard/products/ProductTable";
 import ProductFormDialog from "@/components/dashboard/products/ProductFormDialog";
 import DeleteConfirmationDialog from "@/components/dashboard/products/DeleteConfirmationDialog";
+import ProductViewDialog from "@/components/dashboard/products/ProductViewDialog";
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
@@ -21,7 +22,10 @@ export default function ProductsPage() {
 
   const [deleteOpen, setDeleteOpen] =
     useState(false);
-
+  
+  const [viewOpen, setViewOpen] =
+    useState(false);
+    
   function handleAddProduct() {
     setSelectedProduct(null);
     setFormOpen(true);
@@ -37,6 +41,11 @@ export default function ProductsPage() {
     setDeleteOpen(true);
   }
 
+function handleViewProduct(product: Product) {
+  setSelectedProduct(product);
+  setViewOpen(true);
+}
+
   function handleSuccess() {
     setRefresh((prev) => prev + 1);
 
@@ -47,7 +56,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <main className="space-y-6 p-6">
+    <div className="space-y-6 w-full">
       <div>
         <h1 className="text-3xl font-bold">
           Products
@@ -69,6 +78,7 @@ export default function ProductsPage() {
         refresh={refresh}
         onEdit={handleEditProduct}
         onDelete={handleDeleteProduct}
+        onView={handleViewProduct}
       />
 
       <ProductFormDialog
@@ -84,6 +94,13 @@ export default function ProductsPage() {
         product={selectedProduct}
         onSuccess={handleSuccess}
       />
-    </main>
+
+      <ProductViewDialog
+        open={viewOpen}
+        onOpenChange={setViewOpen}
+        product={selectedProduct}
+      /> 
+      
+    </div>
   );
 }
