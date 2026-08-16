@@ -1,9 +1,15 @@
 import { FilterQuery } from "mongoose";
 
 import BaseRepository from "./BaseRepository";
+
 import InventoryTransaction, {
   IInventoryTransaction,
 } from "@/models/InventoryTransaction";
+
+import "@/models/User";
+import "@/models/InventoryBatch";
+import "@/models/Inventory";
+import "@/models/Product";
 
 export default class InventoryTransactionRepository extends BaseRepository<IInventoryTransaction> {
   constructor() {

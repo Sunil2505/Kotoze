@@ -5,6 +5,8 @@ import Inventory, {
 } from "@/models/Inventory";
 import InventoryTransaction from "@/models/InventoryTransaction";
 
+import InventoryBatch from "@/models/InventoryBatch";
+
 import InventoryRepository from "@/repositories/InventoryRepository";
 
 import { AppError } from "@/lib/AppError";
@@ -89,7 +91,13 @@ export default class InventoryService {
    */
   static async increaseStock(params: {
     productId: mongoose.Types.ObjectId;
+    batchId?: mongoose.Types.ObjectId;
+    batchNumber?: string;
+    expiryDate?: Date | null;
+    costPrice?: number;
+
     quantity: number;
+
     transactionType: InventoryTransactionType;
     referenceType: InventoryReferenceType;
     referenceId?: mongoose.Types.ObjectId;
@@ -99,7 +107,13 @@ export default class InventoryService {
   }) {
     const {
       productId,
+      batchId,
+      batchNumber,
+      expiryDate,
+      costPrice,
+
       quantity,
+
       transactionType,
       referenceType,
       referenceId,
@@ -114,6 +128,18 @@ export default class InventoryService {
       );
     }
 
+    if (costPrice != null && costPrice < 0) {
+      throw new Error(
+        "Cost price cannot be negative."
+      );
+    }
+
+    if (!batchId && !batchNumber?.trim()) {
+      throw new Error(
+        "Batch number is required."
+      );
+    }
+
     const session =
       await mongoose.startSession();
 
@@ -121,6 +147,11 @@ export default class InventoryService {
 
     try {
       await session.withTransaction(async () => {
+
+        // --------------------------------
+        // 1. Inventory
+        // --------------------------------
+
         inventory =
           await Inventory.findOneAndUpdate(
             { productId },
@@ -128,6 +159,7 @@ export default class InventoryService {
               $inc: {
                 availableStock: quantity,
               },
+
               $setOnInsert: {
                 reservedStock: 0,
                 minimumStock: 0,
@@ -148,11 +180,75 @@ export default class InventoryService {
           );
         }
 
+        // --------------------------------
+        // 2. Inventory Batch
+        // --------------------------------
+
+        let currentBatch;
+
+        if (batchId) {
+          currentBatch =
+            await InventoryBatch.findOneAndUpdate(
+              {
+                _id: batchId,
+                productId,
+                isDeleted: false,
+              },
+              {
+                $inc: {
+                  quantity,
+                  availableQuantity: quantity,
+                },
+              },
+              {
+                new: true,
+                session,
+              }
+            );
+
+          if (!currentBatch) {
+            throw new Error(
+              "Inventory batch not found."
+            );
+          }
+        } else {
+          currentBatch =
+            await InventoryBatch.create(
+              [
+                {
+                  inventoryId: inventory._id,
+                  productId,
+
+                  batchNumber:
+                    batchNumber!.trim(),
+
+                  quantity,
+                  availableQuantity:
+                    quantity,
+
+                  costPrice:
+                    costPrice ?? 0,
+
+                  expiryDate:
+                    expiryDate ?? null,
+                },
+              ],
+              { session }
+            ).then(
+              (batches) => batches[0]
+            );
+        }
+
+        // --------------------------------
+        // 3. Inventory Transaction
+        // --------------------------------
+
         await InventoryTransaction.create(
           [
             {
               inventoryId: inventory._id,
               productId,
+              batchId: currentBatch._id,
 
               transactionType,
               referenceType,
@@ -163,7 +259,6 @@ export default class InventoryService {
               quantity,
 
               remarks,
-
               createdBy,
             },
           ],
@@ -172,6 +267,7 @@ export default class InventoryService {
       });
 
       return inventory;
+
     } finally {
       await session.endSession();
     }
