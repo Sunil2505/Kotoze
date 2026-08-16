@@ -8,6 +8,7 @@ import {
 export interface IInventoryTransaction extends Document {
   inventoryId: mongoose.Types.ObjectId;
   productId: mongoose.Types.ObjectId;
+  batchId: mongoose.Types.ObjectId;
 
   transactionType: InventoryTransactionType;
   referenceType: InventoryReferenceType;
@@ -40,6 +41,14 @@ const InventoryTransactionSchema = new Schema<IInventoryTransaction>(
     productId: {
       type: Schema.Types.ObjectId,
       ref: "Product",
+      required: true,
+      index: true,
+    },
+
+
+    batchId: {
+      type: Schema.Types.ObjectId,
+      ref: "InventoryBatch",
       required: true,
       index: true,
     },
@@ -122,6 +131,11 @@ InventoryTransactionSchema.index({
 // Active transaction history
 InventoryTransactionSchema.index({
   isDeleted: 1,
+  createdAt: -1,
+});
+
+InventoryTransactionSchema.index({
+  batchId: 1,
   createdAt: -1,
 });
 
