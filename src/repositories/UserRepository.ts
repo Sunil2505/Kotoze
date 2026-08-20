@@ -15,12 +15,39 @@ export default class UserRepository extends BaseRepository<IUser> {
     return User.findOne({ email });
   }
 
-async findByMobileOrEmail(login: string) {
- return User.findOne({
-  $or: [
-    { mobile: login },
-    { email: login.toLowerCase() },
-  ],
-}).populate("roleId");
-}
+  async findByMobileOrEmail(login: string) {
+    return User.findOne({
+      $or: [
+        { mobile: login },
+        { email: login.toLowerCase() },
+      ],
+    }).populate("roleId");
+  }
+
+  async findByIdWithRole(id: string) {
+    return User.findOne({
+      _id: id,
+      isDeleted: false,
+    })
+      .select("-passwordHash")
+      .populate("roleId");
+  }
+
+  async updateLastLoginAt(id: string) {
+    return User.findOneAndUpdate(
+      {
+        _id: id,
+        isDeleted: false,
+      },
+      {
+        $set: {
+          lastLoginAt: new Date(),
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate("roleId");
+  }
 }

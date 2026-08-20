@@ -41,15 +41,55 @@ export default class AuthService {
       );
     }
 
+    const updatedUser =
+      await this.userRepository.updateLastLoginAt(
+        user._id.toString()
+      );
+
+    if (!updatedUser) {
+      throw new AppError(
+        "Unable to update login information.",
+        500
+      );
+    }
+
     const token =
       await generateAccessToken({
         userId: user._id.toString(),
         roleId: user.roleId.toString(),
       });
 
+    const {
+      passwordHash: _passwordHash,
+      ...userResponse
+    } = updatedUser.toObject();
+
     return {
       token,
-      user,
+      user: userResponse,
     };
+  }
+
+  async getCurrentUser(userId: string) {
+    const user =
+      await this.userRepository.findByIdWithRole(
+        userId
+      );
+
+    if (!user || user.isDeleted) {
+      throw new AppError(
+        "User not found.",
+        404
+      );
+    }
+
+    if (user.status !== Status.ACTIVE) {
+      throw new AppError(
+        "User account is not active.",
+        403
+      );
+    }
+
+    return user;
   }
 }
