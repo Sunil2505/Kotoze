@@ -3,13 +3,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import VendorService from "@/services/VendorService";
 
+import { getAuthenticatedUser } from "@/lib/auth/authenticatedUser";
+import { requireRole } from "@/lib/auth/authorization";
+
 const vendorService = new VendorService();
 
-export async function GET() {
+export async function GET(
+  request: NextRequest
+) {
   try {
     await connectDB();
 
-    const vendors = await vendorService.getAll();
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const vendors =
+      await vendorService.getAll();
 
     return NextResponse.json({
       data: vendors,
@@ -17,22 +31,38 @@ export async function GET() {
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ||
+          "Failed to fetch vendors.",
       },
       {
-        status: 500,
+        status: error.statusCode ?? 500,
       }
     );
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest
+) {
   try {
     await connectDB();
 
-    const body = await request.json();
+    const user =
+      await getAuthenticatedUser(request);
 
-    const vendor = await vendorService.createVendor(body);
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const body =
+      await request.json();
+
+    const vendor =
+      await vendorService.createVendor(
+        body
+      );
 
     return NextResponse.json(
       {
@@ -45,10 +75,12 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ||
+          "Failed to create vendor.",
       },
       {
-        status: 400,
+        status: error.statusCode ?? 400,
       }
     );
   }
