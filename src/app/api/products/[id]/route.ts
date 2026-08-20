@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/mongodb";
 import ProductService from "@/services/ProductService";
+import { getAuthenticatedUser } from "@/lib/auth/authenticatedUser";
+import { requireRole } from "@/lib/auth/authorization";
 
 const productService = new ProductService();
 
@@ -19,9 +21,19 @@ export async function GET(
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const user =
+      await getAuthenticatedUser(request);
 
-    const product = await productService.getById(id);
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const { id } =
+      await context.params;
+
+    const product =
+      await productService.getById(id);
 
     return NextResponse.json({
       data: product,
@@ -29,7 +41,9 @@ export async function GET(
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ??
+          "Something went wrong.",
       },
       {
         status: error.statusCode ?? 404,
@@ -46,12 +60,25 @@ export async function PUT(
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const user =
+      await getAuthenticatedUser(request);
 
-    const body = await request.json();
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const { id } =
+      await context.params;
+
+    const body =
+      await request.json();
 
     const product =
-      await productService.updateProduct(id, body);
+      await productService.updateProduct(
+        id,
+        body
+      );
 
     return NextResponse.json({
       data: product,
@@ -59,7 +86,9 @@ export async function PUT(
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ??
+          "Something went wrong.",
       },
       {
         status: error.statusCode ?? 400,
@@ -76,7 +105,16 @@ export async function DELETE(
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const { id } =
+      await context.params;
 
     await productService.deleteProduct(id);
 
@@ -84,12 +122,15 @@ export async function DELETE(
       data: {
         success: true,
       },
-      message: "Product deleted successfully.",
+      message:
+        "Product deleted successfully.",
     });
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ??
+          "Something went wrong.",
       },
       {
         status: error.statusCode ?? 400,

@@ -2,14 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/mongodb";
 import ProductService from "@/services/ProductService";
+import { getAuthenticatedUser } from "@/lib/auth/authenticatedUser";
+import { requireRole } from "@/lib/auth/authorization";
 
 const productService = new ProductService();
 
-export async function GET() {
+export async function GET(
+  request: NextRequest
+) {
   try {
     await connectDB();
 
-    const products = await productService.getAll();
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const products =
+      await productService.getAll();
 
     return NextResponse.json({
       data: products,
@@ -17,23 +30,38 @@ export async function GET() {
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ??
+          "Something went wrong.",
       },
       {
-        status: 500,
+        status: error.statusCode ?? 500,
       }
     );
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest
+) {
   try {
     await connectDB();
 
-    const body = await request.json();
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
+    const body =
+      await request.json();
 
     const product =
-      await productService.createProduct(body);
+      await productService.createProduct(
+        body
+      );
 
     return NextResponse.json(
       {
@@ -46,10 +74,12 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     return NextResponse.json(
       {
-        message: error.message,
+        message:
+          error.message ??
+          "Something went wrong.",
       },
       {
-        status: 400,
+        status: error.statusCode ?? 400,
       }
     );
   }
