@@ -16,11 +16,11 @@ export default class UserRepository extends BaseRepository<IUser> {
   }
 
 async findByMobileOrEmail(login: string) {
-  return User.findOne({
-    $or: [
-      { mobile: login },
-      { email: login.toLowerCase() },
-    ],
-  });
+ return User.findOne({
+  $or: [
+    { mobile: login },
+    { email: login.toLowerCase() },
+  ],
+}).populate("roleId");
 }
 }

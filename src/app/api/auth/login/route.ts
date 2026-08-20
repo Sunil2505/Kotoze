@@ -53,10 +53,6 @@ response.cookies.set("kotoze_access_token", token, {
   maxAge: 60 * 15,
 });
 
-console.log("================================");
-console.log("COOKIE AFTER SET:");
-console.log(response.cookies.get("kotoze_access_token"));
-
 return response;
   } catch (error: any) {
     console.error(error);
