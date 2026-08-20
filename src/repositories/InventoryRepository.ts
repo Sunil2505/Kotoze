@@ -4,6 +4,8 @@ import Inventory, {
   IInventory,
 } from "@/models/Inventory";
 
+import "@/models/Product";
+
 class InventoryRepository extends BaseRepository<IInventory> {
   constructor() {
     super(Inventory);

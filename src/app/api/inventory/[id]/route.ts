@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/mongodb";
 import InventoryService from "@/services/InventoryService";
+import { getAuthenticatedUser } from "@/lib/auth/authenticatedUser";
+import { requireRole } from "@/lib/auth/authorization";
 
 interface RouteContext {
   params: Promise<{
@@ -16,6 +18,14 @@ export async function GET(
   try {
     await connectDB();
 
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
     const { id } = await params;
 
     const inventory =
@@ -26,10 +36,11 @@ export async function GET(
     return NextResponse.json(
       {
         message:
-          error.message || "Inventory not found.",
+          error.message ||
+          "Inventory not found.",
       },
       {
-        status: 404,
+        status: error.statusCode ?? 404,
       }
     );
   }
@@ -42,9 +53,18 @@ export async function PUT(
   try {
     await connectDB();
 
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
+
     const { id } = await params;
 
-    const body = await request.json();
+    const body =
+      await request.json();
 
     const inventory =
       await InventoryService.updateInventory(
@@ -57,10 +77,11 @@ export async function PUT(
     return NextResponse.json(
       {
         message:
-          error.message || "Failed to update inventory.",
+          error.message ||
+          "Failed to update inventory.",
       },
       {
-        status: 400,
+        status: error.statusCode ?? 400,
       }
     );
   }
@@ -72,6 +93,14 @@ export async function DELETE(
 ) {
   try {
     await connectDB();
+
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      "SUPER_ADMIN"
+    );
 
     const { id } = await params;
 
@@ -85,10 +114,11 @@ export async function DELETE(
     return NextResponse.json(
       {
         message:
-          error.message || "Failed to delete inventory.",
+          error.message ||
+          "Failed to delete inventory.",
       },
       {
-        status: 400,
+        status: error.statusCode ?? 400,
       }
     );
   }
