@@ -14,6 +14,10 @@ import RecentOrders from "@/components/dashboard/tables/RecentOrders";
 import RecentUsers from "@/components/dashboard/widgets/RecentUsers";
 
 import { getDashboardOverview } from "@/lib/api/dashboard";
+import {
+  getCurrentUser,
+  AuthUser,
+} from "@/lib/api/auth";
 
 interface DashboardData {
   summary: {
@@ -45,14 +49,33 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [dashboard, setDashboard] =
+    useState<DashboardData | null>(null);
+
+  const [user, setUser] =
+    useState<AuthUser | null>(null);
+
+  const [loading, setLoading] =
+    useState(true);
 
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const response = await getDashboardOverview();
-        setDashboard(response.data);
+        const [
+          dashboardResponse,
+          userResponse,
+        ] = await Promise.all([
+          getDashboardOverview(),
+          getCurrentUser(),
+        ]);
+
+        setDashboard(
+          dashboardResponse.data
+        );
+
+        setUser(
+          userResponse.user
+        );
       } catch (error) {
         console.error(error);
       } finally {
@@ -83,6 +106,10 @@ export default function DashboardPage() {
     );
   }
 
+  const fullName = user
+    ? `${user.firstName} ${user.lastName}`.trim()
+    : "Admin";
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -92,7 +119,7 @@ export default function DashboardPage() {
         </h1>
 
         <p className="mt-1 text-muted-foreground">
-          Welcome back, Super Admin.
+          Welcome back, {fullName}.
         </p>
       </div>
 
