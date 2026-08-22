@@ -5,6 +5,8 @@ import InventoryBatch, {
   IInventoryBatch,
 } from "@/models/InventoryBatch";
 
+import "@/models/Product";
+
 export default class InventoryBatchRepository extends BaseRepository<IInventoryBatch> {
   constructor() {
     super(InventoryBatch);
@@ -57,4 +59,4 @@ export default class InventoryBatchRepository extends BaseRepository<IInventoryB
       deletedAt: new Date(),
     });
   }
-} 
+}
