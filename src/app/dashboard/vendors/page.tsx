@@ -19,8 +19,7 @@ export default function VendorsPage() {
 
   const [formOpen, setFormOpen] = useState(false);
 
-  const [deleteOpen, setDeleteOpen] =
-    useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   function handleAddVendor() {
     setSelectedVendor(null);
@@ -37,40 +36,57 @@ export default function VendorsPage() {
     setDeleteOpen(true);
   }
 
-function handleSuccess() {
-  setRefresh((prev) => prev + 1);
+  function handleSuccess() {
+    setRefresh((previous) => previous + 1);
 
-  setSelectedVendor(null);
+    setSelectedVendor(null);
 
-  setFormOpen(false);
-  setDeleteOpen(false);
-}
+    setFormOpen(false);
+    setDeleteOpen(false);
+  }
 
   return (
-    <main className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">
+    <main className="flex h-full min-h-0 flex-col p-6">
+
+      {/* =========================
+          PAGE HEADER - FIXED
+      ========================== */}
+      <div className="shrink-0">
+        <h1 className="text-3xl font-bold text-slate-900">
           Vendors
         </h1>
 
-        <p className="text-muted-foreground">
+        <p className="mt-1 text-sm text-slate-500">
           Manage all vendors.
         </p>
       </div>
 
-      <VendorToolbar
-        search={search}
-        onSearchChange={setSearch}
-        onAddVendor={handleAddVendor}
-      />
+      {/* =========================
+          TOOLBAR - FIXED
+      ========================== */}
+      <div className="mt-6 shrink-0">
+        <VendorToolbar
+          search={search}
+          onSearchChange={setSearch}
+          onAddVendor={handleAddVendor}
+        />
+      </div>
 
-      <VendorTable
-        search={search}
-        refresh={refresh}
-        onEdit={handleEditVendor}
-        onDelete={handleDeleteVendor}
-      />
+      {/* =========================
+          TABLE AREA - SCROLLABLE
+      ========================== */}
+      <div className="mt-6 min-h-0 flex-1 overflow-hidden">
+        <VendorTable
+          search={search}
+          refresh={refresh}
+          onEdit={handleEditVendor}
+          onDelete={handleDeleteVendor}
+        />
+      </div>
 
+      {/* =========================
+          ADD / EDIT DIALOG
+      ========================== */}
       <VendorFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -78,12 +94,16 @@ function handleSuccess() {
         onSuccess={handleSuccess}
       />
 
+      {/* =========================
+          DELETE DIALOG
+      ========================== */}
       <DeleteConfirmationDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         vendor={selectedVendor}
         onSuccess={handleSuccess}
       />
+
     </main>
   );
 }

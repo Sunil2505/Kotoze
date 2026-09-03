@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/mongodb";
 import VendorService from "@/services/VendorService";
+import { getAuthenticatedUser } from "@/lib/auth/authenticatedUser";
+import { requireRole } from "@/lib/auth/authorization";
 
 const vendorService = new VendorService();
 
@@ -19,17 +21,38 @@ export async function GET(
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const user =
+      await getAuthenticatedUser(request);
 
-    const vendor = await vendorService.getById(id);
+    requireRole(
+      user.roleId.code,
+      ["SUPER_ADMIN", "ADMIN"]
+    );
+
+    const { id } =
+      await context.params;
+
+    const vendor =
+      await vendorService.getById(id);
 
     return NextResponse.json({
+      success: true,
+      message:
+        "Vendor fetched successfully.",
       data: vendor,
     });
   } catch (error: any) {
+    console.error(
+      "Vendor GET API:",
+      error
+    );
+
     return NextResponse.json(
       {
-        message: error.message,
+        success: false,
+        message:
+          error.message ??
+          "Failed to fetch vendor.",
       },
       {
         status: error.statusCode ?? 404,
@@ -46,22 +69,44 @@ export async function PUT(
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const user =
+      await getAuthenticatedUser(request);
 
-    const body = await request.json();
-
-    const vendor = await vendorService.updateVendor(
-      id,
-      body
+    requireRole(
+      user.roleId.code,
+      ["SUPER_ADMIN", "ADMIN"]
     );
 
+    const { id } =
+      await context.params;
+
+    const body =
+      await request.json();
+
+    const vendor =
+      await vendorService.updateVendor(
+        id,
+        body
+      );
+
     return NextResponse.json({
+      success: true,
+      message:
+        "Vendor updated successfully.",
       data: vendor,
     });
   } catch (error: any) {
+    console.error(
+      "Vendor PUT API:",
+      error
+    );
+
     return NextResponse.json(
       {
-        message: error.message,
+        success: false,
+        message:
+          error.message ??
+          "Failed to update vendor.",
       },
       {
         status: error.statusCode ?? 400,
@@ -78,20 +123,36 @@ export async function DELETE(
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const user =
+      await getAuthenticatedUser(request);
+
+    requireRole(
+      user.roleId.code,
+      ["SUPER_ADMIN", "ADMIN"]
+    );
+
+    const { id } =
+      await context.params;
 
     await vendorService.deleteVendor(id);
 
     return NextResponse.json({
-      data: {
-        success: true,
-      },
-      message: "Vendor deleted successfully.",
+      success: true,
+      message:
+        "Vendor deleted successfully.",
     });
   } catch (error: any) {
+    console.error(
+      "Vendor DELETE API:",
+      error
+    );
+
     return NextResponse.json(
       {
-        message: error.message,
+        success: false,
+        message:
+          error.message ??
+          "Failed to delete vendor.",
       },
       {
         status: error.statusCode ?? 400,

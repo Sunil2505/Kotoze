@@ -19,20 +19,29 @@ export async function GET(
 
     requireRole(
       user.roleId.code,
-      "SUPER_ADMIN"
+      ["SUPER_ADMIN", "ADMIN"]
     );
 
     const vendors =
       await vendorService.getAll();
 
     return NextResponse.json({
+      success: true,
+      message:
+        "Vendors fetched successfully.",
       data: vendors,
     });
   } catch (error: any) {
+    console.error(
+      "Vendors GET API:",
+      error
+    );
+
     return NextResponse.json(
       {
+        success: false,
         message:
-          error.message ||
+          error.message ??
           "Failed to fetch vendors.",
       },
       {
@@ -53,7 +62,7 @@ export async function POST(
 
     requireRole(
       user.roleId.code,
-      "SUPER_ADMIN"
+      ["SUPER_ADMIN", "ADMIN"]
     );
 
     const body =
@@ -66,6 +75,9 @@ export async function POST(
 
     return NextResponse.json(
       {
+        success: true,
+        message:
+          "Vendor created successfully.",
         data: vendor,
       },
       {
@@ -73,10 +85,16 @@ export async function POST(
       }
     );
   } catch (error: any) {
+    console.error(
+      "Vendors POST API:",
+      error
+    );
+
     return NextResponse.json(
       {
+        success: false,
         message:
-          error.message ||
+          error.message ??
           "Failed to create vendor.",
       },
       {

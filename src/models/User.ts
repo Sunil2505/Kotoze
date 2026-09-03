@@ -1,16 +1,26 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
-import BaseSchema, { schemaOptions } from "./BaseModel";
+import mongoose, {
+  Document,
+  Model,
+  Schema,
+} from "mongoose";
+
+import BaseSchema, {
+  schemaOptions,
+} from "./BaseModel";
+
 import { Status } from "@/types/common";
 
 export interface IUser extends Document {
   roleId: mongoose.Types.ObjectId;
   vendorId?: mongoose.Types.ObjectId | null;
 
+  username: string;
+
   firstName: string;
   lastName: string;
   fullName: string;
 
-  email?: string;
+  email: string;
   mobile: string;
 
   passwordHash: string;
@@ -47,6 +57,14 @@ const UserSchema = new Schema<IUser>(
       index: true,
     },
 
+    username: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+      index: true,
+    },
+
     firstName: {
       type: String,
       required: true,
@@ -68,10 +86,11 @@ const UserSchema = new Schema<IUser>(
 
     email: {
       type: String,
+      required: true,
       trim: true,
       lowercase: true,
       unique: true,
-      sparse: true,
+      index: true,
     },
 
     mobile: {
@@ -123,14 +142,26 @@ const UserSchema = new Schema<IUser>(
  * Automatically generate full name before saving.
  */
 UserSchema.pre("save", function (next) {
-  this.fullName = `${this.firstName} ${this.lastName}`.trim();
+  this.fullName =
+    `${this.firstName} ${this.lastName}`.trim();
+
+  if (this.username) {
+    this.username =
+      this.username.trim();
+  }
+
   next();
 });
 
-UserSchema.index({ fullName: "text" });
+UserSchema.index({
+  fullName: "text",
+});
 
 const User: Model<IUser> =
   mongoose.models.User ||
-  mongoose.model<IUser>("User", UserSchema);
-  
+  mongoose.model<IUser>(
+    "User",
+    UserSchema
+  );
+
 export default User;

@@ -60,17 +60,35 @@ export default function Topbar() {
     ? `${user.firstName} ${user.lastName}`.trim()
     : "Loading...";
 
-  const roleName =
-    user?.roleId?.name ?? "Administrator";
+  const roleCode =
+    user?.roleId?.code;
 
-  const initials = user
-    ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase()
-    : "...";
+  const displayName =
+    roleCode === "SUPER_ADMIN"
+      ? "Super Admin"
+      : roleCode === "ADMIN"
+        ? "Admin"
+        : fullName;
+
+  const roleName =
+    user?.roleId?.name ??
+    "Administrator";
+
+  const initials =
+    roleCode === "SUPER_ADMIN"
+      ? "SA"
+      : roleCode === "ADMIN"
+        ? "A"
+        : user
+          ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase()
+          : "...";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6 shadow-sm">
+
       {/* Left Side */}
       <div className="flex items-center gap-4">
+
         <button
           type="button"
           className="rounded-lg p-2 transition hover:bg-gray-100"
@@ -79,6 +97,7 @@ export default function Topbar() {
         </button>
 
         <div className="relative hidden md:block">
+
           <Search
             size={18}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -89,11 +108,14 @@ export default function Topbar() {
             placeholder="Search..."
             className="h-10 w-80 rounded-lg border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:bg-white"
           />
+
         </div>
       </div>
 
       {/* Right Side */}
       <div className="flex items-center gap-5">
+
+        {/* Notifications */}
         <button
           type="button"
           className="relative rounded-lg p-2 transition hover:bg-gray-100"
@@ -107,18 +129,23 @@ export default function Topbar() {
 
         {/* User */}
         <div className="flex items-center gap-3">
+
+          {/* Avatar */}
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 font-bold text-white">
             {initials}
           </div>
 
+          {/* User Info */}
           <div className="hidden text-left md:block">
+
             <p className="text-sm font-semibold">
-              {fullName}
+              {displayName}
             </p>
 
             <p className="text-xs text-gray-500">
               {roleName}
             </p>
+
           </div>
 
           {/* Logout */}
@@ -131,6 +158,7 @@ export default function Topbar() {
           >
             <LogOut size={18} />
           </button>
+
         </div>
       </div>
     </header>

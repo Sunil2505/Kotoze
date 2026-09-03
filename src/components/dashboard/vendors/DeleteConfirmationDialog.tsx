@@ -61,27 +61,34 @@ export default function DeleteConfirmationDialog({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="w-[440px] max-w-[calc(100vw-2rem)] overflow-hidden p-0">
+        {/* Header */}
+        <DialogHeader className="px-5 pt-5 pb-3">
           <DialogTitle>
             Delete Vendor
           </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className="leading-6">
             Are you sure you want to delete{" "}
             <span className="font-semibold text-foreground">
               {vendor?.businessName}
             </span>
             ?
             <br />
-            This vendor will be marked as deleted and will no longer appear in the application.
+            This vendor will be marked as deleted
+            and will no longer appear in the
+            application.
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
+        {/* Footer */}
+          <DialogFooter className="relative -top-2 mt-0 flex-row items-center justify-end gap-2 border-t px-5 pb-2 pt-1.5">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            className="-translate-y-1"
+            onClick={() =>
+              onOpenChange(false)
+            }
             disabled={loading}
           >
             Cancel
@@ -89,6 +96,7 @@ export default function DeleteConfirmationDialog({
 
           <Button
             variant="destructive"
+            className="-translate-y-1"
             onClick={handleDelete}
             disabled={loading}
           >

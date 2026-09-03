@@ -3,6 +3,7 @@ import AppError from "@/core/errors/AppError";
 export type RoleCode =
   | "SUPER_ADMIN"
   | "ADMIN"
+  | "STAFF"
   | "VENDOR"
   | "CUSTOMER";
 

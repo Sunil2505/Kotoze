@@ -16,7 +16,7 @@ export async function GET(
 
     requireRole(
       user.roleId.code,
-      "SUPER_ADMIN"
+      ["SUPER_ADMIN", "ADMIN"]
     );
 
     const data =

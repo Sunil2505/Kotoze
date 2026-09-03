@@ -2,32 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
+
 import {
   LayoutDashboard,
   Users,
   ShieldCheck,
   Store,
- FolderTree,
+  FolderTree,
   Tags,
   Package,
   Boxes,
   ShoppingCart,
   BarChart3,
+  FolderDown,
   Settings,
 } from "lucide-react";
 
 const menu = [
-  {
-    title: "GENERAL",
-    items: [
-      {
-        name: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-      },
-    ],
-  },
-
   {
     title: "MANAGEMENT",
     items: [
@@ -94,6 +86,11 @@ const menu = [
         href: "/dashboard/reports",
         icon: BarChart3,
       },
+      {
+        name: "Export Manager",
+        href: "/dashboard/exports",
+        icon: FolderDown,
+      },
     ],
   },
 
@@ -112,67 +109,227 @@ const menu = [
 export default function Sidebar() {
   const pathname = usePathname();
 
+  const navRef =
+    useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    navRef.current?.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [pathname]);
+
   return (
-    <aside className="flex h-screen w-72 shrink-0 flex-col border-r border-slate-200 bg-white">
-      {/* Logo */}
-      <div className="border-b border-slate-200 px-6 py-6">
-        <h1 className="text-3xl font-bold tracking-tight text-emerald-600">
-          KOTOZE
-        </h1>
+    <aside className="fixed left-0 top-0 z-40 h-screen w-72 border-r bg-background">
+      <div className="flex h-full flex-col">
 
-        <p className="mt-1 text-sm text-slate-500">
-          Commerce Operating System
-        </p>
-      </div>
+        {/* =========================
+            LOGO - FIXED
+        ========================== */}
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-        {menu.map((group) => (
-          <div key={group.title} className="mb-8">
-            <p className="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-slate-400">
-              {group.title}
-            </p>
+        <div className="shrink-0 border-b px-6 py-7">
 
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const Icon = item.icon;
+          <Link href="/dashboard">
 
-                const active =
-                  pathname === item.href ||
-                  pathname.startsWith(item.href + "/");
-
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                      active
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                    }`}
-                  >
-                    <Icon size={19} />
-
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
+            <div className="font-serif text-[30px] font-bold tracking-tight text-emerald-700">
+              KOTOZE
             </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Footer */}
-      <div className="border-t border-slate-200 p-5">
-        <div className="rounded-2xl bg-slate-100 p-4">
-          <p className="text-sm font-semibold text-slate-800">
-            Kotoze Admin
-          </p>
+            <div className="mt-1 font-serif text-[14px] text-muted-foreground">
+              Commerce Operating System
+            </div>
 
-          <p className="mt-1 text-xs text-slate-500">
-            Version 2.0
-          </p>
+          </Link>
+
         </div>
+
+        {/* =========================
+            GENERAL - FIXED
+        ========================== */}
+
+        <div className="shrink-0 px-4 pt-6">
+
+          <div className="mb-3 px-3 font-serif text-[14px] font-semibold tracking-widest text-slate-400">
+            GENERAL
+          </div>
+
+          <Link
+            href="/dashboard"
+            className={`
+              flex h-[52px] items-center gap-4
+              rounded-2xl px-4
+              font-serif text-[16px]
+              transition-colors
+              ${
+                pathname === "/dashboard"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }
+            `}
+          >
+
+            <LayoutDashboard
+              className={`
+                h-5 w-5 shrink-0
+                ${
+                  pathname === "/dashboard"
+                    ? "text-emerald-700"
+                    : "text-slate-500"
+                }
+              `}
+              strokeWidth={1.8}
+            />
+
+            <span>
+              Dashboard
+            </span>
+
+          </Link>
+
+        </div>
+
+        {/* =========================
+            SCROLLABLE NAVIGATION
+        ========================== */}
+
+        <div
+          ref={navRef}
+          className="
+            min-h-0
+            flex-1
+            overflow-y-auto
+            px-4
+            pt-7
+            pb-6
+            [scrollbar-width:none]
+            [-ms-overflow-style:none]
+            [&::-webkit-scrollbar]:hidden
+          "
+        >
+
+          <nav className="space-y-7">
+
+            {menu.map(
+              (section) => (
+                <div
+                  key={
+                    section.title
+                  }
+                >
+
+                  {/* Section title */}
+
+                  <div className="mb-3 px-3 font-serif text-[14px] font-semibold tracking-widest text-slate-400">
+                    {section.title}
+                  </div>
+
+                  {/* Menu items */}
+
+                  <div className="space-y-1">
+
+                    {section.items.map(
+                      (item) => {
+
+                        const Icon =
+                          item.icon;
+
+                        const isActive =
+                          pathname ===
+                            item.href ||
+                          (item.href !==
+                            "/dashboard" &&
+                            pathname.startsWith(
+                              `${item.href}/`
+                            ));
+
+                        return (
+                          <Link
+                            key={
+                              item.href
+                            }
+                            href={
+                              item.href
+                            }
+                            className={`
+                              flex h-[52px] items-center gap-4
+                              rounded-2xl px-4
+                              font-serif text-[16px]
+                              transition-colors
+                              ${
+                                isActive
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                              }
+                            `}
+                          >
+
+                            <Icon
+                              className={`
+                                h-5 w-5 shrink-0
+                                ${
+                                  isActive
+                                    ? "text-emerald-700"
+                                    : "text-slate-500"
+                                }
+                              `}
+                              strokeWidth={
+                                1.8
+                              }
+                            />
+
+                            <span>
+                              {
+                                item.name
+                              }
+                            </span>
+
+                          </Link>
+                        );
+                      }
+                    )}
+
+                  </div>
+
+                </div>
+              )
+            )}
+
+          </nav>
+
+        </div>
+
+        {/* =========================
+            ADMIN CARD - FIXED
+        ========================== */}
+
+        <div className="shrink-0 border-t bg-background p-4">
+
+          <div className="flex items-center gap-3 rounded-2xl bg-slate-100 px-4 py-4">
+
+            {/* Avatar */}
+
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500 font-serif text-sm font-semibold text-white">
+              SA
+            </div>
+
+            {/* User info */}
+
+            <div className="min-w-0 flex-1">
+
+              <div className="truncate font-serif text-[15px] font-semibold text-slate-800">
+                Kotoze Admin
+              </div>
+
+              <div className="mt-0.5 font-serif text-xs text-slate-500">
+                Version 2.0
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </aside>
   );
