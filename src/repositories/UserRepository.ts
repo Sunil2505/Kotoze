@@ -29,15 +29,14 @@ export default class UserRepository
     });
   }
 
-  async findByUsername(
-    username: string
-  ) {
-    return User.findOne({
-      username:
-        username.trim(),
-      isDeleted: false,
-    });
-  }
+async findByUsername(
+  username: string
+) {
+  return User.findOne({
+    username: username.trim(),
+    isDeleted: false,
+  }).populate("roleId");
+}
 
   async findByMobileOrEmail(
     login: string

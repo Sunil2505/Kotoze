@@ -163,12 +163,15 @@ export async function POST(
      * Access token is generated ONLY after
      * successful OTP verification.
      */
-    const token =
-      await generateAccessToken({
-        userId,
-        roleId:
-          user.roleId._id.toString(),
-      });
+const token =
+  await generateAccessToken(
+    {
+      userId,
+      roleId:
+        user.roleId._id.toString(),
+    },
+    rememberMe
+  );
 
     const {
       passwordHash: _passwordHash,

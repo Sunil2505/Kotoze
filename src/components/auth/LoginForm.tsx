@@ -1438,10 +1438,10 @@ export default function LoginForm() {
                 One-Time Password
               </label>
             
-              <div className="flex min-h-[22px] flex-1 items-center justify-end">
+              <div className="flex h-11 flex-1 items-center justify-end overflow-hidden">
                 {notification && (
                   <div
-                    className={`flex items-center gap-1.5 text-right text-sm font-medium ${
+                    className={`flex w-full items-center justify-end gap-1.5 text-right text-sm font-medium leading-5 ${
                       notification.type === "error"
                         ? "text-red-600"
                         : notification.type === "success"
@@ -1771,10 +1771,10 @@ export default function LoginForm() {
                 One-Time Password
               </label>
             
-              <div className="flex min-h-[22px] flex-1 items-center justify-end">
+              <div className="flex h-11 flex-1 items-center justify-end overflow-hidden">
                 {notification && (
                   <div
-                    className={`flex items-center gap-1.5 text-right text-sm font-medium ${
+                    className={`flex w-full items-center justify-end gap-1.5 text-right text-sm font-medium leading-5 ${
                       notification.type === "error"
                         ? "text-red-600"
                         : notification.type === "success"

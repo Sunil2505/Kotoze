@@ -19,9 +19,7 @@ export default class AuthService {
    * =================================================
    *
    * Dashboard login accepts:
-   * - Username
-   * - Mobile
-   * - Email
+   * - Username only
    *
    * Username is CASE-SENSITIVE.
    * Email is CASE-INSENSITIVE.
@@ -32,9 +30,24 @@ export default class AuthService {
     rememberMe: boolean = false
   ) {
     const user =
-      await this.userRepository.findByMobileOrEmail(
-        login
+      await this.userRepository.findByUsername(
+        login.trim()
       );
+
+    console.log(
+      "LOGIN DEBUG:",
+      {
+        enteredUsername: login.trim(),
+        foundUser: user
+          ? {
+              username: user.username,
+              isDeleted: user.isDeleted,
+              status: user.status,
+              roleId: user.roleId,
+            }
+          : null,
+      }
+    );
 
     if (!user || user.isDeleted) {
       throw new AppError(
@@ -276,6 +289,19 @@ export default class AuthService {
       expiresAt:
         otpChallenge.expiresAt,
     };
+  }
+
+  /*
+   * =================================================
+   * RESEND LOGIN OTP
+   * =================================================
+   */
+  async resendLoginOtp(
+    challengeId: string
+  ) {
+    return this.otpService.resendLoginOtp(
+      challengeId
+    );
   }
 
   /*
