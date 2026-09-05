@@ -66,14 +66,12 @@ const VendorSchema = new Schema<IVendor>(
       lowercase: true,
       trim: true,
       sparse: true,
-      unique: true,
     },
 
     mobile: {
       type: String,
       required: true,
       trim: true,
-      unique: true,
       index: true,
     },
 
@@ -110,12 +108,94 @@ const VendorSchema = new Schema<IVendor>(
   schemaOptions
 );
 
-VendorSchema.index({ businessName: "text" });
+/*
+ * VENDOR CODE
+ * Always unique.
+ */
+VendorSchema.index(
+  { vendorCode: 1 },
+  {
+    unique: true,
+  }
+);
 
+/*
+ * EMAIL
+ * Only non-deleted vendors must have a unique email.
+ */
+VendorSchema.index(
+  { email: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      isDeleted: false,
+      email: {
+        $exists: true,
+        $type: "string",
+      },
+    },
+  }
+);
+
+/*
+ * MOBILE
+ * Only non-deleted vendors must have a unique mobile number.
+ */
+VendorSchema.index(
+  { mobile: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      isDeleted: false,
+    },
+  }
+);
+
+/*
+ * GST NUMBER
+ * Only non-deleted vendors with a non-empty GST number
+ * must have a unique GST number.
+ */
+VendorSchema.index(
+  { gstNumber: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      isDeleted: false,
+      gstNumber: {
+        $exists: true,
+        $ne: "",
+      },
+    },
+  }
+);
+
+/*
+ * PAN NUMBER
+ * Only non-deleted vendors with a non-empty PAN number
+ * must have a unique PAN number.
+ */
+VendorSchema.index(
+  { panNumber: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      isDeleted: false,
+      panNumber: {
+        $exists: true,
+        $ne: "",
+      },
+    },
+  }
+);
+
+/*
+ * BUSINESS NAME SEARCH
+ */
+VendorSchema.index({ businessName: "text" });
 
 const Vendor: Model<IVendor> =
   mongoose.models.Vendor ||
   mongoose.model<IVendor>("Vendor", VendorSchema);
 
-export default mongoose.models.Vendor ||
-  mongoose.model("Vendor", VendorSchema);
+export default Vendor;

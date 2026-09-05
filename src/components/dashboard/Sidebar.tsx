@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   LayoutDashboard,
@@ -19,7 +19,26 @@ import {
   Settings,
 } from "lucide-react";
 
-const menu = [
+type RoleCode =
+  | "SUPER_ADMIN"
+  | "ADMIN"
+  | "STAFF"
+  | "VENDOR"
+  | "CUSTOMER";
+
+type MenuItem = {
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  allowedRoles?: RoleCode[];
+};
+
+type MenuSection = {
+  title: string;
+  items: MenuItem[];
+};
+
+const menu: MenuSection[] = [
   {
     title: "MANAGEMENT",
     items: [
@@ -27,16 +46,31 @@ const menu = [
         name: "Users",
         href: "/dashboard/users",
         icon: Users,
+        allowedRoles: [
+          "SUPER_ADMIN",
+          "ADMIN",
+        ],
       },
+
       {
         name: "Roles",
         href: "/dashboard/roles",
         icon: ShieldCheck,
+        allowedRoles: [
+          "SUPER_ADMIN",
+          "ADMIN",
+        ],
       },
+
       {
         name: "Vendors",
         href: "/dashboard/vendors",
         icon: Store,
+        allowedRoles: [
+          "SUPER_ADMIN",
+          "ADMIN",
+          "STAFF",
+        ],
       },
     ],
   },
@@ -49,16 +83,19 @@ const menu = [
         href: "/dashboard/categories",
         icon: FolderTree,
       },
+
       {
         name: "Brands",
         href: "/dashboard/brands",
         icon: Tags,
       },
+
       {
         name: "Products",
         href: "/dashboard/products",
         icon: Package,
       },
+
       {
         name: "Inventory",
         href: "/dashboard/inventory",
@@ -86,6 +123,7 @@ const menu = [
         href: "/dashboard/reports",
         icon: BarChart3,
       },
+
       {
         name: "Export Manager",
         href: "/dashboard/exports",
@@ -111,6 +149,45 @@ export default function Sidebar() {
 
   const navRef =
     useRef<HTMLDivElement>(null);
+
+  const [roleCode, setRoleCode] =
+    useState<RoleCode | null>(null);
+
+  useEffect(() => {
+    async function loadCurrentUser() {
+      try {
+        const response = await fetch(
+          "/api/auth/me",
+          {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          return;
+        }
+
+        const result =
+          await response.json();
+
+        const code =
+          result?.user?.roleId?.code ??
+          result?.data?.roleId?.code;
+
+        if (code) {
+          setRoleCode(
+            code as RoleCode
+          );
+        }
+      } catch {
+        // Ignore sidebar role loading errors.
+      }
+    }
+
+    loadCurrentUser();
+  }, []);
 
   useEffect(() => {
     navRef.current?.scrollTo({
@@ -210,88 +287,117 @@ export default function Sidebar() {
           <nav className="space-y-7">
 
             {menu.map(
-              (section) => (
-                <div
-                  key={
-                    section.title
-                  }
-                >
+              (section) => {
 
-                  {/* Section title */}
+                const visibleItems =
+                  section.items.filter(
+                    (item) => {
 
-                  <div className="mb-3 px-3 font-serif text-[14px] font-semibold tracking-widest text-slate-400">
-                    {section.title}
-                  </div>
+                      if (
+                        !item.allowedRoles
+                      ) {
+                        return true;
+                      }
 
-                  {/* Menu items */}
+                      if (!roleCode) {
+                        return false;
+                      }
 
-                  <div className="space-y-1">
+                      return item.allowedRoles.includes(
+                        roleCode
+                      );
+                    }
+                  );
 
-                    {section.items.map(
-                      (item) => {
+                if (
+                  visibleItems.length === 0
+                ) {
+                  return null;
+                }
 
-                        const Icon =
-                          item.icon;
+                return (
+                  <div
+                    key={
+                      section.title
+                    }
+                  >
 
-                        const isActive =
-                          pathname ===
-                            item.href ||
-                          (item.href !==
-                            "/dashboard" &&
-                            pathname.startsWith(
-                              `${item.href}/`
-                            ));
+                    {/* Section title */}
 
-                        return (
-                          <Link
-                            key={
-                              item.href
-                            }
-                            href={
-                              item.href
-                            }
-                            className={`
-                              flex h-[52px] items-center gap-4
-                              rounded-2xl px-4
-                              font-serif text-[16px]
-                              transition-colors
-                              ${
-                                isActive
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    <div className="mb-3 px-3 font-serif text-[14px] font-semibold tracking-widest text-slate-400">
+                      {section.title}
+                    </div>
+
+                    {/* Menu items */}
+
+                    <div className="space-y-1">
+
+                      {visibleItems.map(
+                        (item) => {
+
+                          const Icon =
+                            item.icon;
+
+                          const isActive =
+                            pathname ===
+                              item.href ||
+                            (item.href !==
+                              "/dashboard" &&
+                              pathname.startsWith(
+                                `${item.href}/`
+                              ));
+
+                          return (
+                            <Link
+                              key={
+                                item.href
                               }
-                            `}
-                          >
-
-                            <Icon
+                              href={
+                                item.href
+                              }
                               className={`
-                                h-5 w-5 shrink-0
+                                flex h-[52px] items-center gap-4
+                                rounded-2xl px-4
+                                font-serif text-[16px]
+                                transition-colors
                                 ${
                                   isActive
-                                    ? "text-emerald-700"
-                                    : "text-slate-500"
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                                 }
                               `}
-                              strokeWidth={
-                                1.8
-                              }
-                            />
+                            >
 
-                            <span>
-                              {
-                                item.name
-                              }
-                            </span>
+                              <Icon
+                                className={`
+                                  h-5 w-5 shrink-0
+                                  ${
+                                    isActive
+                                      ? "text-emerald-700"
+                                      : "text-slate-500"
+                                  }
+                                `}
+                                strokeWidth={
+                                  1.8
+                                }
+                              />
 
-                          </Link>
-                        );
-                      }
-                    )}
+                              <span>
+                                {
+                                  item.name
+                                }
+                              </span>
+
+                            </Link>
+                          );
+                        }
+                      )}
+
+                    </div>
 
                   </div>
-
-                </div>
-              )
+                );
+              }
             )}
 
           </nav>

@@ -1,6 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import { X } from "lucide-react";
 
 import {
@@ -34,7 +38,8 @@ export default function UserFormDialog({
     useState(false);
 
   const [roleId, setRoleId] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] =
+    useState("");
   const [firstName, setFirstName] =
     useState("");
   const [lastName, setLastName] =
@@ -66,7 +71,9 @@ export default function UserFormDialog({
       setEmail(user.email ?? "");
       setMobile(user.mobile ?? "");
       setPassword("");
-      setStatus(user.status ?? "ACTIVE");
+      setStatus(
+        user.status ?? "ACTIVE"
+      );
     } else {
       setRoleId("");
       setUsername("");
@@ -94,8 +101,6 @@ export default function UserFormDialog({
 
         setRoles(response.data);
       } catch (error: any) {
-        console.error(error);
-
         setError(
           error.message ??
             "Failed to load roles."
@@ -127,7 +132,9 @@ export default function UserFormDialog({
       }
 
       if (!username.trim()) {
-        setError("Username is required.");
+        setError(
+          "Username is required."
+        );
         return;
       }
 
@@ -162,7 +169,8 @@ export default function UserFormDialog({
       if (isEdit && user) {
         await updateUser(user._id, {
           roleId,
-          username: username.trim(),
+          username:
+            username.trim(),
           firstName:
             firstName.trim(),
           lastName:
@@ -177,7 +185,8 @@ export default function UserFormDialog({
       } else {
         await createUser({
           roleId,
-          username: username.trim(),
+          username:
+            username.trim(),
           firstName:
             firstName.trim(),
           lastName:
@@ -194,8 +203,6 @@ export default function UserFormDialog({
 
       onSuccess();
     } catch (error: any) {
-      console.error(error);
-
       setError(
         error.message ??
           "Something went wrong."
@@ -208,29 +215,35 @@ export default function UserFormDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-        <div>
-          <h2 className="text-lg font-bold leading-6 text-slate-900">
-            {isEdit ? "Edit User" : "Add User"}
-          </h2>
 
-          <p className="mt-1 text-sm leading-5 text-slate-500">
-            {isEdit
-              ? "Update user information."
-              : "Create a new system user."}
-          </p>
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+          <div>
+            <h2 className="text-lg font-bold leading-6 text-slate-900">
+              {isEdit
+                ? "Edit User"
+                : "Add User"}
+            </h2>
+
+            <p className="mt-1 text-sm leading-5 text-slate-500">
+              {isEdit
+                ? "Update user information."
+                : "Create a new system user."}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              onOpenChange(false)
+            }
+            disabled={loading}
+            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => onOpenChange(false)}
-          disabled={loading}
-          className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-        >
-          <X size={20} />
-        </button>
-      </div>
         {/* Form */}
         <form
           onSubmit={handleSubmit}
@@ -252,7 +265,9 @@ export default function UserFormDialog({
             <select
               value={roleId}
               onChange={(event) =>
-                setRoleId(event.target.value)
+                setRoleId(
+                  event.target.value
+                )
               }
               disabled={
                 loading ||
@@ -268,7 +283,8 @@ export default function UserFormDialog({
 
               {roles
                 .filter(
-                  (role) => role.isActive
+                  (role) =>
+                    role.isActive
                 )
                 .map((role) => (
                   <option
@@ -291,7 +307,9 @@ export default function UserFormDialog({
               type="text"
               value={username}
               onChange={(event) =>
-                setUsername(event.target.value)
+                setUsername(
+                  event.target.value
+                )
               }
               placeholder="Username"
               autoComplete="username"
@@ -382,56 +400,62 @@ export default function UserFormDialog({
             </div>
           </div>
 
-            {/* Password + Status */}
-            <div className="flex items-end gap-5">
-              {/* Password */}
-              {!isEdit && (
-                <div className="w-[155px]">
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                    Password
-                  </label>
+          {/* Password + Status */}
+          <div className="flex items-end gap-5">
 
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(event) =>
-                      setPassword(event.target.value)
-                    }
-                    placeholder="Minimum 6 characters"
-                    disabled={loading}
-                    className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none transition focus:border-emerald-500"
-                  />
-                </div>
-              )}
-
-              {/* Status */}
-              <div className="w-[100px]">
+            {/* Password */}
+            {!isEdit && (
+              <div className="w-[155px]">
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                  Status
+                  Password
                 </label>
 
-                <select
-                  value={status}
+                <input
+                  type="password"
+                  value={password}
                   onChange={(event) =>
-                    setStatus(event.target.value)
+                    setPassword(
+                      event.target.value
+                    )
                   }
+                  placeholder="Minimum 6 characters"
                   disabled={loading}
-                  className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-emerald-500"
-                >
-                  <option value="ACTIVE">
-                    Active
-                  </option>
-
-                  <option value="INACTIVE">
-                    Inactive
-                  </option>
-
-                  <option value="BLOCKED">
-                    Blocked
-                  </option>
-                </select>
+                  className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none transition focus:border-emerald-500"
+                />
               </div>
+            )}
+
+            {/* Status */}
+            <div className="w-[100px]">
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                Status
+              </label>
+
+              <select
+                value={status}
+                onChange={(event) =>
+                  setStatus(
+                    event.target.value
+                  )
+                }
+                disabled={loading}
+                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-emerald-500"
+              >
+                <option value="ACTIVE">
+                  Active
+                </option>
+
+                <option value="INACTIVE">
+                  Inactive
+                </option>
+
+                <option value="BLOCKED">
+                  Blocked
+                </option>
+              </select>
             </div>
+          </div>
+
           {/* Actions */}
           <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
             <button

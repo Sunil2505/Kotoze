@@ -19,7 +19,11 @@ export async function GET(
 
     requireRole(
       user.roleId.code,
-      ["SUPER_ADMIN", "ADMIN"]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "STAFF",
+      ]
     );
 
     const vendors =
@@ -62,7 +66,11 @@ export async function POST(
 
     requireRole(
       user.roleId.code,
-      ["SUPER_ADMIN", "ADMIN"]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "STAFF",
+      ]
     );
 
     const body =

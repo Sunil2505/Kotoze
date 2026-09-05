@@ -162,19 +162,22 @@ export default function LoginForm() {
   }, [resendSecondsLeft]);
 
   /*
-   * AUTO-FOCUS FIRST RESET OTP BOX
+   * AUTO-FOCUS FIRST OTP BOX
+   *
+   * When either login OTP or password-reset OTP screen opens,
+   * automatically place the cursor in the first OTP box.
    *
    * This hook belongs to LoginForm itself so the hook order never changes
    * when authMode switches between login/forgot/OTP/reset screens.
    */
   useEffect(() => {
-    if (authMode !== "forgot-otp") {
+    if (authMode !== "login-otp" && authMode !== "forgot-otp") {
       return;
     }
 
     const timer = window.setTimeout(() => {
       const firstInput = document.getElementById(
-        "reset-otp-0"
+        authMode === "login-otp" ? "otp-0" : "reset-otp-0"
       ) as HTMLInputElement | null;
 
       firstInput?.focus();
@@ -751,6 +754,9 @@ export default function LoginForm() {
           login.trim()
         );
       }
+
+console.log("ABOUT TO REDIRECT TO DASHBOARD");
+router.push("/dashboard");
 
       router.push("/dashboard");
     } catch (error) {

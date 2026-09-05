@@ -16,7 +16,11 @@ export async function GET(
 
     requireRole(
       user.roleId.code,
-      ["SUPER_ADMIN", "ADMIN"]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "STAFF",
+      ]
     );
 
     const data =
@@ -42,7 +46,8 @@ export async function GET(
           "Failed to fetch dashboard overview.",
       },
       {
-        status: error.statusCode ?? 500,
+        status:
+          error.statusCode ?? 500,
       }
     );
   }

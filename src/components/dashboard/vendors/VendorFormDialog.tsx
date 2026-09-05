@@ -123,6 +123,9 @@ export default function VendorFormDialog({
   const [loading, setLoading] =
     useState(false);
 
+  const [submitError, setSubmitError] =
+    useState("");
+
   const [businessName, setBusinessName] =
     useState("");
 
@@ -172,6 +175,40 @@ export default function VendorFormDialog({
     "REJECTED"
   >("PENDING");
 
+  /*
+   * Drag state.
+   *
+   * The dialog itself stays in Radix's normal centered
+   * position. During dragging we only apply a visual
+   * translate offset, so there is no jump on pointer-down.
+   */
+  const [dragging, setDragging] =
+    useState(false);
+
+  const dialogContentRef =
+    useRef<HTMLDivElement>(null);
+
+  const dragFrameRef =
+    useRef<number | null>(null);
+
+  const dragStartRef =
+    useRef({
+      mouseX: 0,
+      mouseY: 0,
+      startX: 0,
+      startY: 0,
+      dialogLeft: 0,
+      dialogTop: 0,
+      dialogWidth: 0,
+      dialogHeight: 0,
+    });
+
+  const pendingOffsetRef =
+    useRef({
+      x: 0,
+      y: 0,
+    });
+
   const emailInputRef =
     useRef<HTMLInputElement>(null);
 
@@ -181,33 +218,15 @@ export default function VendorFormDialog({
   const panInputRef =
     useRef<HTMLInputElement>(null);
 
-  /*
-   * Email validity.
-   *
-   * Empty email is allowed.
-   */
   const emailValid =
     isValidEmail(email);
 
-  /*
-   * PAN validity.
-   *
-   * Empty PAN is allowed.
-   */
   const panValid =
     isValidPAN(panNumber);
 
-  /*
-   * GST validity.
-   *
-   * Empty GST is allowed.
-   */
   const gstValid =
     isValidGST(gstNumber);
 
-  /*
-   * Error visibility.
-   */
   const showEmailError =
     emailTouched &&
     email.trim().length > 0 &&
@@ -224,75 +243,301 @@ export default function VendorFormDialog({
     !gstValid;
 
   /*
-   * Load existing vendor / reset
-   * form when dialog opens.
+   * Every time the dialog opens, explicitly reset its
+   * visual transform to the normal centered position.
+   *
+   * No position is persisted.
    */
   useEffect(() => {
-    if (vendor) {
-      setBusinessName(
-        vendor.businessName
-      );
-
-      setLegalName(
-        vendor.legalName ?? ""
-      );
-
-      setContactPerson(
-        vendor.contactPerson
-      );
-
-      setEmail(
-        vendor.email ?? ""
-      );
-
-      setEmailTouched(false);
-
-      setMobile(vendor.mobile);
-
-      setMobileValid(false);
-
-      setGstNumber(
-        vendor.gstNumber ?? ""
-      );
-
-      setGstTouched(false);
-
-      setPanNumber(
-        vendor.panNumber ?? ""
-      );
-
-      setPanTouched(false);
-
-      setStatus(vendor.status);
-
-      setApprovalStatus(
-        vendor.approvalStatus
-      );
-    } else {
-      setBusinessName("");
-      setLegalName("");
-      setContactPerson("");
-      setEmail("");
-      setEmailTouched(false);
-      setMobile("");
-      setMobileValid(false);
-      setGstNumber("");
-      setGstTouched(false);
-      setPanNumber("");
-      setPanTouched(false);
-      setStatus("ACTIVE");
-      setApprovalStatus("PENDING");
+    if (!open) {
+      return;
     }
-  }, [vendor, open]);
+
+    setDragging(false);
+    setSubmitError("");
+
+    pendingOffsetRef.current = {
+      x: 0,
+      y: 0,
+    };
+
+    const frame =
+      requestAnimationFrame(() => {
+        const dialog =
+          dialogContentRef.current;
+
+        if (!dialog) {
+          return;
+        }
+
+        dialog.style.transform =
+          "translate(-50%, -50%)";
+
+        dialog.style.translate = "0 0";
+      });
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [open]);
 
   /*
-   * Email changed.
+   * Clamp the drag offset so the complete dialog
+   * remains inside the browser viewport.
    */
+  function clampDragOffset(
+    offsetX: number,
+    offsetY: number,
+    rect: DOMRect
+  ) {
+    if (typeof window === "undefined") {
+      return {
+        x: offsetX,
+        y: offsetY,
+      };
+    }
+
+    const padding = 20;
+
+    const minX =
+      padding - rect.left;
+
+    const maxX =
+      window.innerWidth -
+      rect.width -
+      padding -
+      rect.left;
+
+    const minY =
+      padding - rect.top;
+
+    const maxY =
+      window.innerHeight -
+      rect.height -
+      padding -
+      rect.top;
+
+    return {
+      x: Math.min(
+        maxX,
+        Math.max(minX, offsetX)
+      ),
+      y: Math.min(
+        maxY,
+        Math.max(minY, offsetY)
+      ),
+    };
+  }
+
+  /*
+   * Header-only drag.
+   *
+   * Clicking/typing controls is never treated as a drag.
+   */
+  function handleDragStart(
+    event: React.PointerEvent<HTMLDivElement>
+  ) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    const target =
+      event.target as HTMLElement;
+
+    /*
+     * Header title/description is draggable.
+     * Interactive controls are not.
+     */
+    if (
+      target.closest(
+        [
+          "button",
+          "input",
+          "select",
+          "textarea",
+          "a",
+          "[role='button']",
+          "[role='combobox']",
+          "[role='listbox']",
+          "[role='option']",
+          "[contenteditable='true']",
+        ].join(",")
+      )
+    ) {
+      return;
+    }
+
+    const dialog =
+      dialogContentRef.current;
+
+    if (!dialog) {
+      return;
+    }
+
+    const rect =
+      dialog.getBoundingClientRect();
+
+    /*
+     * Capture the actual position at the exact
+     * moment the user starts dragging.
+     */
+    dragStartRef.current = {
+      mouseX: event.clientX,
+      mouseY: event.clientY,
+      startX: 0,
+      startY: 0,
+      dialogLeft: rect.left,
+      dialogTop: rect.top,
+      dialogWidth: rect.width,
+      dialogHeight: rect.height,
+    };
+
+    pendingOffsetRef.current = {
+      x: 0,
+      y: 0,
+    };
+
+    setDragging(true);
+
+    event.preventDefault();
+
+    event.currentTarget.setPointerCapture(
+      event.pointerId
+    );
+  }
+
+  /*
+   * Smooth movement using requestAnimationFrame.
+   *
+   * The dialog remains centered structurally;
+   * only its transform offset changes.
+   */
+  function handleDragMove(
+    event: React.PointerEvent<HTMLDivElement>
+  ) {
+    if (!dragging) {
+      return;
+    }
+
+    const deltaX =
+      event.clientX -
+      dragStartRef.current.mouseX;
+
+    const deltaY =
+      event.clientY -
+      dragStartRef.current.mouseY;
+
+    const baseRect = {
+      left:
+        dragStartRef.current.dialogLeft,
+      top:
+        dragStartRef.current.dialogTop,
+      width:
+        dragStartRef.current.dialogWidth,
+      height:
+        dragStartRef.current.dialogHeight,
+      right: 0,
+      bottom: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    } as DOMRect;
+
+    const next =
+      clampDragOffset(
+        dragStartRef.current.startX +
+          deltaX,
+        dragStartRef.current.startY +
+          deltaY,
+        baseRect
+      );
+
+    pendingOffsetRef.current = next;
+
+    if (
+      dragFrameRef.current !== null
+    ) {
+      return;
+    }
+
+    dragFrameRef.current =
+      requestAnimationFrame(() => {
+        dragFrameRef.current = null;
+
+        const dialog =
+          dialogContentRef.current;
+
+        if (!dialog) {
+          return;
+        }
+
+        const offset =
+          pendingOffsetRef.current;
+
+        dialog.style.transform =
+          `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px))`;
+
+        /*
+         * Tailwind v4 / CSS individual translate
+         * utilities can otherwise add their own
+         * translation. Neutralize that separately.
+         */
+        dialog.style.translate = "0 0";
+      });
+  }
+
+  /*
+   * Finish the current drag.
+   */
+  function handleDragEnd(
+    event: React.PointerEvent<HTMLDivElement>
+  ) {
+    if (!dragging) {
+      return;
+    }
+
+    if (
+      dragFrameRef.current !== null
+    ) {
+      cancelAnimationFrame(
+        dragFrameRef.current
+      );
+
+      dragFrameRef.current = null;
+    }
+
+    setDragging(false);
+
+    try {
+      event.currentTarget.releasePointerCapture(
+        event.pointerId
+      );
+    } catch {
+      // Pointer capture may already be released.
+    }
+  }
+
+  /*
+   * Cleanup drag animation.
+   */
+  useEffect(() => {
+    return () => {
+      if (
+        dragFrameRef.current !== null
+      ) {
+        cancelAnimationFrame(
+          dragFrameRef.current
+        );
+      }
+    };
+  }, []);
+
   function handleEmailChange(
     value: string
   ) {
     setEmail(value);
     setEmailTouched(true);
+    setSubmitError("");
   }
 
   /*
@@ -348,6 +593,7 @@ export default function VendorFormDialog({
 
     setPanNumber(upperValue);
     setPanTouched(true);
+    setSubmitError("");
   }
 
   /*
@@ -403,6 +649,7 @@ export default function VendorFormDialog({
 
     setGstNumber(upperValue);
     setGstTouched(true);
+    setSubmitError("");
   }
 
   /*
@@ -443,6 +690,8 @@ export default function VendorFormDialog({
   }
 
   async function handleSubmit() {
+    setSubmitError("");
+
     /*
      * Validate email.
      */
@@ -506,9 +755,7 @@ export default function VendorFormDialog({
       onSuccess();
       onOpenChange(false);
     } catch (error) {
-      console.error(error);
-
-      alert(
+      setSubmitError(
         error instanceof Error
           ? error.message
           : "Something went wrong"
@@ -536,8 +783,30 @@ export default function VendorFormDialog({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="w-[640px] max-w-[640px] max-h-[85vh] overflow-y-auto px-6 py-4">
-        <DialogHeader className="space-y-1">
+      <DialogContent
+        ref={dialogContentRef}
+        className={`w-[640px] max-w-[640px] max-h-[85vh] overflow-y-auto px-6 py-4 ${
+          dragging
+            ? "select-none"
+            : ""
+        }`}
+        style={{
+          willChange: dragging
+            ? "transform"
+            : "auto",
+        }}
+      >
+        <DialogHeader
+          className={`space-y-1 touch-none ${
+            dragging
+              ? "cursor-grabbing"
+              : "cursor-grab"
+          }`}
+          onPointerDown={handleDragStart}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragEnd}
+        >
           <DialogTitle>
             {vendor
               ? "Edit Vendor"
@@ -608,7 +877,10 @@ export default function VendorFormDialog({
           <div className="col-span-2 w-full">
             <PhoneInput
               value={mobile}
-              onChange={setMobile}
+              onChange={(value) => {
+                setMobile(value);
+                setSubmitError("");
+              }}
               onValidityChange={
                 setMobileValid
               }
@@ -781,6 +1053,13 @@ export default function VendorFormDialog({
 
           </div>
         </div>
+
+        {/* Submit Error */}
+        {submitError && (
+          <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+            {submitError}
+          </div>
+        )}
 
         <DialogFooter className="pt-1">
           <Button

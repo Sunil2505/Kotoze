@@ -43,47 +43,61 @@ export default class VendorService extends BaseService<IVendor> {
     }
 
     const businessName = data.businessName.trim();
-
-    const businessExists =
-      await this.vendorRepository.findByBusinessName(
-        businessName
-      );
-
-    if (businessExists) {
-      throw new Error("Business name already exists.");
-    }
+    const mobile = data.mobile.trim();
 
     const mobileExists =
-      await this.vendorRepository.findByMobile(
-        data.mobile.trim()
-      );
+      await this.vendorRepository.findByMobile(mobile);
 
     if (mobileExists) {
       throw new Error("Mobile number already exists.");
     }
 
     if (data.email) {
+      const email = data.email.trim().toLowerCase();
+
       const emailExists =
-        await this.vendorRepository.findByEmail(
-          data.email.trim().toLowerCase()
-        );
+        await this.vendorRepository.findByEmail(email);
 
       if (emailExists) {
         throw new Error("Email already exists.");
       }
     }
 
- const vendorCode = await SequenceService.nextCode(
-  "vendor",
-  "VND"
-);
+    if (data.gstNumber) {
+      const gstNumber = data.gstNumber.trim().toUpperCase();
+
+      const gstExists =
+        await this.vendorRepository.findByGstNumber(gstNumber);
+
+      if (gstExists) {
+        throw new Error("GST number already exists.");
+      }
+    }
+
+    if (data.panNumber) {
+      const panNumber = data.panNumber.trim().toUpperCase();
+
+      const panExists =
+        await this.vendorRepository.findByPanNumber(panNumber);
+
+      if (panExists) {
+        throw new Error("PAN number already exists.");
+      }
+    }
+
+    const vendorCode = await SequenceService.nextCode(
+      "vendor",
+      "VND"
+    );
 
     return this.vendorRepository.create({
       ...data,
       vendorCode,
       businessName,
-      mobile: data.mobile.trim(),
+      mobile,
       email: data.email?.trim().toLowerCase(),
+      gstNumber: data.gstNumber?.trim().toUpperCase(),
+      panNumber: data.panNumber?.trim().toUpperCase(),
     });
   }
 
@@ -98,62 +112,94 @@ export default class VendorService extends BaseService<IVendor> {
       throw new Error("Vendor not found.");
     }
 
-    if (
-      data.businessName &&
-      data.businessName.trim() !== vendor.businessName
-    ) {
-      const exists =
-        await this.vendorRepository.findByBusinessName(
-          data.businessName.trim()
-        );
+    /*
+     * MOBILE DUPLICATE CHECK
+     */
+    if (data.mobile) {
+      const mobile = data.mobile.trim();
 
-      if (
-        exists &&
-        exists._id.toString() !== id
-      ) {
-        throw new Error("Business name already exists.");
-      }
-    }
-
-    if (
-      data.mobile &&
-      data.mobile.trim() !== vendor.mobile
-    ) {
-      const exists =
+      const mobileExists =
         await this.vendorRepository.findByMobile(
-          data.mobile.trim()
+          mobile,
+          id
         );
 
-      if (
-        exists &&
-        exists._id.toString() !== id
-      ) {
+      if (mobileExists) {
         throw new Error("Mobile number already exists.");
       }
     }
 
-    if (
-      data.email &&
-      data.email.trim().toLowerCase() !== vendor.email
-    ) {
-      const exists =
+    /*
+     * EMAIL DUPLICATE CHECK
+     */
+    if (data.email) {
+      const email = data.email.trim().toLowerCase();
+
+      const emailExists =
         await this.vendorRepository.findByEmail(
-          data.email.trim().toLowerCase()
+          email,
+          id
         );
 
-      if (
-        exists &&
-        exists._id.toString() !== id
-      ) {
+      console.log("EMAIL DUPLICATE CHECK:", {
+        currentVendorId: id,
+        email,
+        foundVendorId: emailExists?._id?.toString(),
+      });
+
+      if (emailExists) {
         throw new Error("Email already exists.");
       }
     }
+
+    /*
+     * GST NUMBER DUPLICATE CHECK
+     */
+    if (data.gstNumber) {
+      const gstNumber =
+        data.gstNumber.trim().toUpperCase();
+
+      const gstExists =
+        await this.vendorRepository.findByGstNumber(
+          gstNumber,
+          id
+        );
+
+      if (gstExists) {
+        throw new Error("GST number already exists.");
+      }
+    }
+
+    /*
+     * PAN NUMBER DUPLICATE CHECK
+     */
+    if (data.panNumber) {
+      const panNumber =
+        data.panNumber.trim().toUpperCase();
+
+      const panExists =
+        await this.vendorRepository.findByPanNumber(
+          panNumber,
+          id
+        );
+
+      if (panExists) {
+        throw new Error("PAN number already exists.");
+      }
+    }
+
+    /*
+     * BUSINESS NAME
+     * Duplicate is allowed.
+     */
 
     return this.vendorRepository.update(id, {
       ...data,
       businessName: data.businessName?.trim(),
       mobile: data.mobile?.trim(),
       email: data.email?.trim().toLowerCase(),
+      gstNumber: data.gstNumber?.trim().toUpperCase(),
+      panNumber: data.panNumber?.trim().toUpperCase(),
     });
   }
 

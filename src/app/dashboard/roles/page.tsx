@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ExcelJS from "exceljs";
-import { jsPDF } from "jspdf";
-import { autoTable } from "jspdf-autotable";
+import {
+  createCSV,
+  createPDF,
+  createExcel,
+  printPDF,
+  type ExportColumn,
+} from "@/lib/export/exportUtils";
 
 import RoleToolbar from "@/components/dashboard/roles/RoleToolbar";
 import RoleTable from "@/components/dashboard/roles/RoleTable";
@@ -14,6 +18,25 @@ import {
   getRoles,
   Role,
 } from "@/lib/api/role";
+
+const roleExportColumns: ExportColumn<Role>[] = [
+  { header: "Role", key: "name", width: 24 },
+  { header: "Code", key: "code", width: 18 },
+  {
+    header: "Description",
+    key: "description",
+    width: 45,
+    format: (value) => value == null || value === "" ? "" : String(value),
+  },
+  { header: "Type", key: "isSystem", width: 14, format: (value) => value ? "System" : "Custom" },
+  { header: "Status", key: "isActive", width: 14, format: (value) => value ? "Active" : "Inactive" },
+  {
+    header: "Created",
+    key: "createdAt",
+    width: 18,
+    format: (value) => value == null ? "" : new Date(String(value)).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+  },
+];
 
 type DialogMode =
   | "add"
@@ -336,388 +359,28 @@ export default function RolesPage() {
   }
 
   /* =========================
-     PRINT / PDF
-  ========================== */
-
-  function createRolesPDF(
-    roles: Role[],
-    autoPrint = false
-  ): Blob | null {
-    const doc =
-      new jsPDF({
-        orientation:
-          "landscape",
-        unit: "mm",
-        format: "a4",
-        compress: true,
-      });
-
-    const pageWidth =
-      doc.internal.pageSize.getWidth();
-
-    /* =========================
-       TITLE
-    ========================== */
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.setFontSize(18);
-
-    /* =========================
-       BRAND TITLE
-    ========================== */
-
-    doc.setTextColor(
-      47,
-      125,
-      90
-    );
-
-    doc.text(
-      "Kotoze",
-      14,
-      17
-    );
-
-    const kotozeWidth =
-      doc.getTextWidth(
-        "Kotoze"
-      );
-
-    doc.setTextColor(
-      17,
-      24,
-      39
-    );
-
-    doc.text(
-      " - Roles",
-      14 +
-        kotozeWidth,
-      17
-    );
-
-    /* =========================
-       SUBTITLE
-    ========================== */
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setFontSize(9);
-
-    doc.setTextColor(
-      107,
-      114,
-      128
-    );
-
-    doc.text(
-      "System and custom roles",
-      14,
-      23
-    );
-
-    /* =========================
-       META
-    ========================== */
-
-    const metaText =
-      `Showing ${roles.length} role${
-        roles.length === 1
-          ? ""
-          : "s"
-      }${
-        search.trim()
-          ? `  •  Search: "${search.trim()}"`
-          : ""
-      }`;
-
-    doc.setFontSize(8);
-
-    doc.text(
-      metaText,
-      14,
-      29
-    );
-
-    /* =========================
-       TABLE DATA
-    ========================== */
-
-    const body =
-      roles.map(
-        (
-          role,
-          index
-        ) => [
-          String(
-            index + 1
-          ),
-
-          role.name,
-
-          role.code,
-
-          role.description ??
-            "—",
-
-          role.isSystem
-            ? "System"
-            : "Custom",
-
-          role.isActive
-            ? "Active"
-            : "Inactive",
-
-          formatDate(
-            role.createdAt
-          ),
-        ]
-      );
-
-    /* =========================
-       TABLE
-    ========================== */
-
-    autoTable(doc, {
-      startY: 34,
-
-      head: [[
-        "No.",
-        "Role",
-        "Code",
-        "Description",
-        "Type",
-        "Status",
-        "Created",
-      ]],
-
-      body,
-
-      theme: "grid",
-
-      tableWidth:
-        pageWidth - 28,
-
-      margin: {
-        left: 14,
-        right: 14,
-      },
-
-      styles: {
-        font: "helvetica",
-
-        fontSize: 8.5,
-
-        textColor: [
-          31,
-          41,
-          55,
-        ],
-
-        cellPadding: 2.8,
-
-        lineColor: [
-          209,
-          213,
-          219,
-        ],
-
-        lineWidth: 0.2,
-
-        valign: "middle",
-
-        overflow:
-          "linebreak",
-
-        halign: "left",
-      },
-
-      headStyles: {
-        font: "helvetica",
-
-        fontStyle:
-          "bold",
-
-        fontSize: 10,
-
-        textColor: [
-          17,
-          24,
-          39,
-        ],
-
-        fillColor: [
-          229,
-          231,
-          235,
-        ],
-
-        lineColor: [
-          156,
-          163,
-          175,
-        ],
-
-        lineWidth: 0.25,
-
-        halign:
-          "center",
-
-        valign:
-          "middle",
-
-        cellPadding: 3.2,
-      },
-
-      columnStyles: {
-        0: {
-          cellWidth: 14,
-          halign:
-            "center",
-        },
-
-        1: {
-          cellWidth: 34,
-          halign: "left",
-        },
-
-        2: {
-          cellWidth: 38,
-          halign: "left",
-        },
-
-        3: {
-          cellWidth: 75,
-          halign: "left",
-        },
-
-        4: {
-          cellWidth: 28,
-          halign:
-            "center",
-        },
-
-        5: {
-          cellWidth: 28,
-          halign:
-            "center",
-        },
-
-        6: {
-          cellWidth: 28,
-          halign:
-            "center",
-        },
-      },
-
-      didParseCell:
-        (data) => {
-          if (
-            data.section ===
-            "body"
-          ) {
-            data.cell.styles.fontSize =
-              8.5;
-          }
-        },
-
-      didDrawPage: () => {
-        const pageHeight =
-          doc.internal.pageSize.getHeight();
-
-        doc.setFont(
-          "helvetica",
-          "normal"
-        );
-
-        doc.setFontSize(7);
-
-        doc.setTextColor(
-          107,
-          114,
-          128
-        );
-
-        doc.text(
-          "Printed from Kotoze Commerce Operating System",
-          14,
-          pageHeight - 8
-        );
-
-        doc.text(
-          `Page ${doc.getNumberOfPages()}`,
-          pageWidth - 14,
-          pageHeight - 8,
-          {
-            align:
-              "right",
-          }
-        );
-      },
-    });
-
-    /* =========================
-       PRINT
-    ========================== */
-
-    if (autoPrint) {
-      doc.autoPrint();
-
-      const blobUrl =
-        doc.output(
-          "bloburl"
-        );
-
-      window.open(
-        blobUrl,
-        "_blank"
-      );
-
-      return null;
-    }
-
-    return doc.output(
-      "blob"
-    );
-  }
-
-  /* =========================
      PRINT
   ========================== */
 
   async function handlePrint() {
     try {
-      const roles =
-        await getExportRoles();
+      const roles = await getExportRoles();
 
-      createRolesPDF(
-        roles,
-        true
-      );
-
+      printPDF({
+        title: "Roles",
+        subtitle: "System and custom roles",
+        search,
+        rows: roles,
+        columns: roleExportColumns,
+      });
     } catch (error) {
-      console.error(
-        "Print roles:",
-        error
-      );
-
+      console.error("Print roles:", error);
       setExportStatus({
         open: true,
         type: "error",
         title: "Print Failed",
-        message:
-          "Kotoze could not print the Roles list.",
-        reason:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred while printing.",
+        message: "Kotoze could not print the Roles list.",
+        reason: error instanceof Error ? error.message : "An unexpected error occurred while printing.",
       });
     }
   }
@@ -728,88 +391,13 @@ export default function RolesPage() {
 
   async function handleExportCSV() {
     try {
-      const roles =
-        await getExportRoles();
-
-      const headers = [
-        "No.",
-        "Role",
-        "Code",
-        "Description",
-        "Type",
-        "Status",
-        "Created",
-      ];
-
-      const rows =
-        roles.map(
-          (
-            role,
-            index
-          ) => [
-            index + 1,
-            role.name,
-            role.code,
-            role.description ??
-              "",
-            role.isSystem
-              ? "System"
-              : "Custom",
-            role.isActive
-              ? "Active"
-              : "Inactive",
-            formatDate(
-              role.createdAt
-            ),
-          ]
-        );
-
-      const csv = [
-        headers,
-        ...rows,
-      ]
-        .map(
-          (row) =>
-            row
-              .map(
-                csvEscape
-              )
-              .join(",")
-        )
-        .join("\r\n");
-
-      const blob =
-        new Blob(
-          [
-            "\uFEFF" +
-              csv,
-          ],
-          {
-            type:
-              "text/csv;charset=utf-8;",
-          }
-        );
-
-      await handleExportToManager(
-        blob,
-        "kotoze-roles.csv",
-        "csv"
-      );
-
-      showExportSuccess(
-        "CSV"
-      );
-
+      const roles = await getExportRoles();
+      const blob = createCSV({ rows: roles, columns: roleExportColumns });
+      await handleExportToManager(blob, "kotoze-roles.csv", "csv");
+      showExportSuccess("CSV");
     } catch (error) {
-      console.error(
-        "Export CSV:",
-        error
-      );
-
-      showExportError(
-        "CSV",
-        error
-      );
+      console.error("Export CSV:", error);
+      showExportError("CSV", error);
     }
   }
 
@@ -819,441 +407,17 @@ export default function RolesPage() {
 
   async function handleExportExcel() {
     try {
-      const roles =
-        await getExportRoles();
-
-      const workbook =
-        new ExcelJS.Workbook();
-
-      workbook.creator =
-        "Kotoze";
-
-      workbook.lastModifiedBy =
-        "Kotoze";
-
-      workbook.created =
-        new Date();
-
-      workbook.modified =
-        new Date();
-
-      const worksheet =
-        workbook.addWorksheet(
-          "Roles"
-        );
-
-      /* =========================
-         COLUMNS
-      ========================== */
-
-      worksheet.columns = [
-        {
-          header: "No.",
-          key: "no",
-          width: 8,
-        },
-
-        {
-          header: "Role",
-          key: "role",
-          width: 24,
-        },
-
-        {
-          header: "Code",
-          key: "code",
-          width: 18,
-        },
-
-        {
-          header:
-            "Description",
-          key: "description",
-          width: 45,
-        },
-
-        {
-          header: "Type",
-          key: "type",
-          width: 14,
-        },
-
-        {
-          header: "Status",
-          key: "status",
-          width: 14,
-        },
-
-        {
-          header: "Created",
-          key: "created",
-          width: 18,
-        },
-      ];
-
-      /* =========================
-         DATA
-      ========================== */
-
-      roles.forEach(
-        (
-          role,
-          index
-        ) => {
-          worksheet.addRow(
-            {
-              no:
-                index + 1,
-
-              role:
-                role.name,
-
-              code:
-                role.code,
-
-              description:
-                role.description ??
-                "",
-
-              type:
-                role.isSystem
-                  ? "System"
-                  : "Custom",
-
-              status:
-                role.isActive
-                  ? "Active"
-                  : "Inactive",
-
-              created:
-                formatDate(
-                  role.createdAt
-                ),
-            }
-          );
-        }
-      );
-
-      /* =========================
-         HEADER STYLE
-      ========================== */
-
-      const headerRow =
-        worksheet.getRow(
-          1
-        );
-
-      headerRow.height =
-        28;
-
-      headerRow.eachCell(
-        (cell) => {
-          cell.font = {
-            name: "Arial",
-            size: 14,
-            bold: true,
-          };
-
-          cell.alignment = {
-            horizontal:
-              "center",
-            vertical:
-              "middle",
-          };
-
-          cell.fill = {
-            type: "pattern",
-            pattern:
-              "solid",
-            fgColor: {
-              argb:
-                "FFE5E7EB",
-            },
-          };
-
-          cell.border = {
-            top: {
-              style: "thin",
-              color: {
-                argb:
-                  "FF9CA3AF",
-              },
-            },
-
-            bottom: {
-              style: "thin",
-              color: {
-                argb:
-                  "FF9CA3AF",
-              },
-            },
-
-            left: {
-              style: "thin",
-              color: {
-                argb:
-                  "FF9CA3AF",
-              },
-            },
-
-            right: {
-              style: "thin",
-              color: {
-                argb:
-                  "FF9CA3AF",
-              },
-            },
-          };
-        }
-      );
-
-      /* =========================
-         DATA CELL STYLE
-      ========================== */
-
-      worksheet.eachRow(
-        (
-          row,
-          rowNumber
-        ) => {
-          if (
-            rowNumber ===
-            1
-          ) {
-            return;
-          }
-
-          row.height =
-            22;
-
-          row.eachCell(
-            (
-              cell,
-              columnNumber
-            ) => {
-              cell.font = {
-                name: "Arial",
-                size: 11,
-              };
-
-              cell.alignment = {
-                vertical:
-                  "middle",
-
-                horizontal:
-                  columnNumber ===
-                    1 ||
-                  columnNumber ===
-                    5 ||
-                  columnNumber ===
-                    6
-                    ? "center"
-                    : "left",
-
-                wrapText:
-                  columnNumber ===
-                  4,
-              };
-
-              cell.border = {
-                top: {
-                  style:
-                    "thin",
-                  color: {
-                    argb:
-                      "FFD1D5DB",
-                  },
-                },
-
-                bottom: {
-                  style:
-                    "thin",
-                  color: {
-                    argb:
-                      "FFD1D5DB",
-                  },
-                },
-
-                left: {
-                  style:
-                    "thin",
-                  color: {
-                    argb:
-                      "FFD1D5DB",
-                  },
-                },
-
-                right: {
-                  style:
-                    "thin",
-                  color: {
-                    argb:
-                      "FFD1D5DB",
-                  },
-                },
-              };
-            }
-          );
-        }
-      );
-
-      /* =========================
-         AUTOMATIC COLUMN WIDTH
-      ========================== */
-
-      const minimumWidths =
-        [
-          6,
-          18,
-          14,
-          20,
-          12,
-          12,
-          15,
-        ];
-
-      const maximumWidths =
-        [
-          8,
-          35,
-          25,
-          60,
-          16,
-          16,
-          20,
-        ];
-
-      worksheet.columns.forEach(
-        (
-          column,
-          index
-        ) => {
-          let maxLength =
-            minimumWidths[
-              index
-            ];
-
-          column.eachCell?.(
-            {
-              includeEmpty:
-                false,
-            },
-            (cell) => {
-              const value =
-                cell.value;
-
-              if (
-                value ===
-                  null ||
-                value ===
-                  undefined
-              ) {
-                return;
-              }
-
-              const length =
-                String(
-                  value
-                ).length;
-
-              if (
-                length >
-                maxLength
-              ) {
-                maxLength =
-                  length;
-              }
-            }
-          );
-
-          column.width =
-            Math.min(
-              maxLength +
-                3,
-              maximumWidths[
-                index
-              ]
-            );
-        }
-      );
-
-      /* =========================
-         FREEZE HEADER
-      ========================== */
-
-      worksheet.views =
-        [
-          {
-            state:
-              "frozen",
-            ySplit: 1,
-          },
-        ];
-
-      /* =========================
-         PAGE SETUP
-      ========================== */
-
-      worksheet.pageSetup =
-        {
-          orientation:
-            "landscape",
-
-          fitToPage: true,
-
-          fitToWidth: 1,
-
-          fitToHeight: 0,
-        };
-
-      /* =========================
-         FOOTER
-      ========================== */
-
-      worksheet.headerFooter
-        .oddFooter =
-        "&LGenerated by Kotoze&CPage &P of &N";
-
-      /* =========================
-         CREATE EXCEL BLOB
-      ========================== */
-
-      const buffer =
-        await workbook.xlsx.writeBuffer();
-
-      const blob =
-        new Blob(
-          [buffer],
-          {
-            type:
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          }
-        );
-
-      /* =========================
-         SAVE TO EXPORT MANAGER
-      ========================== */
-
-      await handleExportToManager(
-        blob,
-        "kotoze-roles.xlsx",
-        "xlsx"
-      );
-
-      showExportSuccess(
-        "Excel"
-      );
-
+      const roles = await getExportRoles();
+      const blob = await createExcel({
+        sheetName: "Roles",
+        rows: roles,
+        columns: roleExportColumns,
+      });
+      await handleExportToManager(blob, "kotoze-roles.xlsx", "xlsx");
+      showExportSuccess("Excel");
     } catch (error) {
-      console.error(
-        "Export Excel:",
-        error
-      );
-
-      showExportError(
-        "Excel",
-        error
-      );
+      console.error("Export Excel:", error);
+      showExportError("Excel", error);
     }
   }
 
@@ -1263,41 +427,24 @@ export default function RolesPage() {
 
   async function handleExportPDF() {
     try {
-      const roles =
-        await getExportRoles();
-
-      const blob =
-        createRolesPDF(
-          roles,
-          false
-        );
+      const roles = await getExportRoles();
+      const blob = createPDF({
+        title: "Roles",
+        subtitle: "System and custom roles",
+        search,
+        rows: roles,
+        columns: roleExportColumns,
+      });
 
       if (!blob) {
-        throw new Error(
-          "Failed to generate PDF."
-        );
+        throw new Error("Failed to generate PDF.");
       }
 
-      await handleExportToManager(
-        blob,
-        "kotoze-roles.pdf",
-        "pdf"
-      );
-
-      showExportSuccess(
-        "PDF"
-      );
-
+      await handleExportToManager(blob, "kotoze-roles.pdf", "pdf");
+      showExportSuccess("PDF");
     } catch (error) {
-      console.error(
-        "Export PDF:",
-        error
-      );
-
-      showExportError(
-        "PDF",
-        error
-      );
+      console.error("Export PDF:", error);
+      showExportError("PDF", error);
     }
   }
 
@@ -1633,41 +780,4 @@ export default function RolesPage() {
 
     </main>
   );
-}
-
-/* =========================
-   HELPERS
-========================= */
-
-function formatDate(
-  value: string
-): string {
-  return new Date(
-    value
-  ).toLocaleDateString(
-    "en-IN",
-    {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }
-  );
-}
-
-function csvEscape(
-  value:
-    | string
-    | number
-): string {
-  return `"${String(
-    value
-  )
-    .replace(
-      /"/g,
-      '""'
-    )
-    .replace(
-      /\r?\n/g,
-      " "
-    )}"`;
 }

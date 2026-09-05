@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import AuthService from "@/services/AuthService";
 import { LoginSchema } from "@/validations/AuthValidation";
+import { generateAccessToken } from "@/lib/auth/jwt";
 
-const authService =
-  new AuthService();
+const authService = new AuthService();
 
 export async function POST(
   request: NextRequest
@@ -13,8 +13,7 @@ export async function POST(
   try {
     await connectDB();
 
-    const body =
-      await request.json();
+    const body = await request.json();
 
     const result =
       LoginSchema.safeParse(body);
@@ -23,8 +22,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Validation failed.",
+          message: "Validation failed.",
           errors:
             result.error.flatten(),
         },
@@ -48,10 +46,15 @@ export async function POST(
       );
 
     /*
-     * Admin and Super Admin
+     * =================================================
+     * ADMIN / SUPER ADMIN
+     * =================================================
      *
-     * Password is correct, but OTP
-     * verification is still required.
+     * Password is correct.
+     * OTP verification is still required.
+     *
+     * Access token will be generated only after
+     * successful OTP verification.
      */
     if (authResult.requiresOtp) {
       return NextResponse.json(
@@ -73,25 +76,78 @@ export async function POST(
     }
 
     /*
-     * Non-privileged users currently
-     * complete login without OTP.
+     * =================================================
+     * STAFF / VENDOR / CUSTOMER
+     * =================================================
      *
-     * Access-token generation for the
-     * final authentication flow will be
-     * handled in the next step.
+     * These users do not require OTP.
+     *
+     * Password authentication is already successful,
+     * so generate the final access token here.
      */
-    return NextResponse.json(
+    const userId =
+      authResult.user._id.toString();
+
+const roleId =
+  authResult.user.roleId._id.toString();
+
+    const accessToken =
+      await generateAccessToken(
+        {
+          userId,
+          roleId,
+        },
+        Boolean(rememberMe)
+      );
+
+    const response =
+      NextResponse.json(
+        {
+          success: true,
+          requiresOtp: false,
+          message:
+            "Login successful.",
+          user: authResult.user,
+        },
+        {
+          status: 200,
+        }
+      );
+
+    /*
+     * =================================================
+     * ACCESS TOKEN COOKIE
+     * =================================================
+     *
+     * Remember Me OFF:
+     *   15 minutes
+     *
+     * Remember Me ON:
+     *   30 days
+     */
+    response.cookies.set(
+      "kotoze_access_token",
+      accessToken,
       {
-        success: true,
-        requiresOtp: false,
-        message:
-          "Login successful.",
-        user: authResult.user,
-      },
-      {
-        status: 200,
+        httpOnly: true,
+
+        secure:
+          process.env.NODE_ENV ===
+          "production",
+
+        sameSite: "lax",
+
+        path: "/",
+
+        maxAge: Boolean(
+          rememberMe
+        )
+          ? 30 * 24 * 60 * 60
+          : 15 * 60,
       }
     );
+
+    return response;
   } catch (error: any) {
     console.error(
       "Login API:",

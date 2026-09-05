@@ -26,7 +26,11 @@ export async function GET(
 
     requireRole(
       user.roleId.code,
-      ["SUPER_ADMIN", "ADMIN"]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "STAFF",
+      ]
     );
 
     const { id } =
@@ -74,7 +78,11 @@ export async function PUT(
 
     requireRole(
       user.roleId.code,
-      ["SUPER_ADMIN", "ADMIN"]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "STAFF",
+      ]
     );
 
     const { id } =
@@ -128,7 +136,11 @@ export async function DELETE(
 
     requireRole(
       user.roleId.code,
-      ["SUPER_ADMIN", "ADMIN"]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "STAFF",
+      ]
     );
 
     const { id } =

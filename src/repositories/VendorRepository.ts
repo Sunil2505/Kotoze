@@ -8,24 +8,35 @@ export default class VendorRepository extends BaseRepository<IVendor> {
     super(Vendor);
   }
 
-  async findByBusinessName(businessName: string) {
+  async findByMobile(mobile: string, excludeId?: string) {
     return this.findOne({
-      businessName,
+      mobile: mobile.trim(),
       isDeleted: false,
+      ...(excludeId ? { _id: { $ne: excludeId } } : {}),
     });
   }
 
-  async findByMobile(mobile: string) {
+  async findByEmail(email: string, excludeId?: string) {
     return this.findOne({
-      mobile,
+      email: email.trim().toLowerCase(),
       isDeleted: false,
+      ...(excludeId ? { _id: { $ne: excludeId } } : {}),
     });
   }
 
-  async findByEmail(email: string) {
+  async findByGstNumber(gstNumber: string, excludeId?: string) {
     return this.findOne({
-      email,
+      gstNumber: gstNumber.trim().toUpperCase(),
       isDeleted: false,
+      ...(excludeId ? { _id: { $ne: excludeId } } : {}),
+    });
+  }
+
+  async findByPanNumber(panNumber: string, excludeId?: string) {
+    return this.findOne({
+      panNumber: panNumber.trim().toUpperCase(),
+      isDeleted: false,
+      ...(excludeId ? { _id: { $ne: excludeId } } : {}),
     });
   }
 
